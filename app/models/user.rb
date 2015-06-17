@@ -26,12 +26,27 @@ class User < ActiveRecord::Base
   #Given a user object and a TrueVault API key, returns a JSON array representing 
   #the user object created on TrueVault or an error if the user already exists
   def create_tv_user(user_params, api_key)
-    @email = user_params[:email].downcase 
-    @password = user_params[:password]
-    @tvResponse = `curl https://api.truevault.com/v1/users   \
+    email = user_params[:email].downcase 
+    password = user_params[:password]
+    tvResponse = `curl https://api.truevault.com/v1/users   \
                   -X POST  -u #{api_key}:    \
-                  -d "username=#{@email}&password=#{@password}"`
-    @tvResponseJSON = ActiveSupport::JSON.decode(@tvResponse)
+                  -d "username=#{email}&password=#{password}"`
+    tvResponseJSON = ActiveSupport::JSON.decode(tvResponse)
+  end
+
+
+  #Initializes a document for a new user. This document holds all their personal information
+  #as base64 encoded JSON strings.
+  def initialize_tv_user_document(user, vault_id, api_key)
+    tvresponse =  `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents \
+                  -u #{api_key}: \
+                  -X POST \
+                  -d "document=e30="`
+    tvResponseJSON = ActiveSupport::JSON.decode(tvresponse)
+    tvDocumentID = tvResponseJSON["document_id"]
+    userID = user.id
+    tvDocument = Document.create(:documentID => tvDocumentID, :user_id => userID)
+        
   end
 
 

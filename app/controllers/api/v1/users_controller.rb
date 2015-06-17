@@ -4,33 +4,35 @@ class Api::V1::UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @usersList = `curl https://api.truevault.com/v1/users \
+    usersList = `curl https://api.truevault.com/v1/users \
     -X GET -u #{@@tvAdminAPI}:`
-    render json: @usersList
+    render json: usersList
+ 
   end
 
   # GET /users/1
   # GET /users/1.json
   def show #todo: Replace hardcoded user id in uri with dynamically generated id
-    @user = `curl https://api.truevault.com/v1/users/07d4fdf5-fec3-44b5-a5e7-db228552533af \
+    user = `curl https://api.truevault.com/v1/users/07d4fdf5-fec3-44b5-a5e7-db228552533af \
     -X GET -u #{@@tvAdminAPI}:`
-    render json: @user
+    render json: user
   end
 
   # POST /users
   # POST /users.json
   def create
-    @user = User.new(user_params)
-    if @user.valid?
-      @tvResponseJSON = @user.create_tv_user(user_params, @@tvAdminAPI)
-      if !@tvResponseJSON["error"]
-        @user.save
-        render json: @user, status: :created
+    user = User.new(user_params)
+    if user.valid?
+      tvResponseJSON = user.create_tv_user(user_params, @@tvAdminAPI)
+      if !tvResponseJSON["error"]
+        user.save
+        user.initialize_tv_user_document(user, @@tvVaultID, @@tvAdminAPI)
+        render json: user, status: :created
       else
-        render json: @tvResponseJSON["error"]
+        render json: tvResponseJSON["error"]
       end
     else
-      render json: @user.errors.full_messages, status: :unprocessable_entity
+      render json: user.errors.full_messages, status: :unprocessable_entity
     end    
   end
   
