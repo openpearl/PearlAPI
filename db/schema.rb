@@ -11,10 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150617200737) do
+ActiveRecord::Schema.define(version: 20150617204807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "blobs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "blobID"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "blobs", ["user_id"], name: "index_blobs_on_user_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.integer  "user_id"
