@@ -11,12 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150615201816) do
+ActiveRecord::Schema.define(version: 20150617200737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "api_v1_users", force: :cascade do |t|
+  create_table "documents", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "documentID"
+    t.text     "documentData"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
+
+  create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "name"
     t.string   "password_digest"
