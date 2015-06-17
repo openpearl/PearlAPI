@@ -1,10 +1,12 @@
-class Api::V1::User < ActiveRecord::Base  
+class User < ActiveRecord::Base  
   #Setting up user attributes validation
   MAXIMUM_NAME_LENGTH = 50
   MAXIMUM_EMAIL_LENGTH = 255
   MINIMUM_PASSWORD_LENGTH = 6
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   has_secure_password
+  has_one :document, dependent: :destroy
+  
   
   before_save { 
     self.email = email.downcase 
