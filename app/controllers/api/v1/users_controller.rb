@@ -26,7 +26,7 @@ class Api::V1::UsersController < ApplicationController
       tvResponseJSON = user.create_tv_user(user_params, @@tvAdminAPI)
       if !tvResponseJSON["error"]
         user.save
-        user.initialize_tv_user_document(user, @@tvVaultID, @@tvAdminAPI)
+        user.initialize_tv_user_document(user, @@tvVaultID, @@tvAdminAPI, @@tvSchemaID)
         render json: user, status: :created
       else
         render json: tvResponseJSON["error"]
