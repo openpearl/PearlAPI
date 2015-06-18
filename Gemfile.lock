@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/openpearl/openpearl_move.git
+  revision: da96ca35194f1daa5f0430dd55e54307e071079d
+  branch: develop
+  specs:
+    openpearl_move (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -105,6 +112,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt
   figaro
+  openpearl_move!
   pg
   rails (= 4.2.1)
   rails-api
