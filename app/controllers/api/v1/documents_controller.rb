@@ -5,8 +5,7 @@ class Api::V1::DocumentsController < ApplicationController
     document = Document.find_by(id: params[:id])
 
     if not document.nil?
-      var = document.update_document(params, document.documentID, @@tvVaultID, @@tvAdminAPI)
-      render json: var
+      document.update_document(params, document.documentID, @@tvVaultID, @@tvAdminAPI)
     end
   end
 

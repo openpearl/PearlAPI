@@ -2,7 +2,11 @@ class Document < ActiveRecord::Base
   #TODO set up the truevault schema when ready for production
   belongs_to :user
 
-  
+  # Given document parameters, checks to see if the TrueVault document
+  # has corresponding parameters by comparing the keys of the parameter
+  # to the keys of the TrueVault document object. Fields in the TrueVault
+  # document which is found to have a matching key are modified to reflect
+  # the value of assoicated with the key passed by the parameter.
   def update_document(document_params, document_id, vault_id, api_key)
     tvDocBase64 = `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents/#{document_id} \
                   -X GET \
