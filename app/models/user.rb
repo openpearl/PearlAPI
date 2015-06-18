@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   has_secure_password
   has_one :document, dependent: :destroy
+  has_one :access_token, dependent: :destroy
   has_many :blobs, dependent: :destroy
   
   before_save { 
