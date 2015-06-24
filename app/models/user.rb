@@ -1,10 +1,14 @@
 class User < ActiveRecord::Base  
+  devise :database_authenticatable, :registerable,
+          :recoverable, :rememberable, :trackable, :validatable,
+          :confirmable, :omniauthable
+  include DeviseTokenAuth::Concerns::User
+  
   #Setting up user attributes validation
   MAXIMUM_NAME_LENGTH = 50
   MAXIMUM_EMAIL_LENGTH = 255
   MINIMUM_PASSWORD_LENGTH = 6
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-  has_secure_password
   has_one :document, dependent: :destroy
   has_one :access_token, dependent: :destroy
   has_many :blobs, dependent: :destroy
