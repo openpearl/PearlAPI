@@ -7,6 +7,14 @@ gem 'rails-api'
 gem 'spring', :group => :development
 
 
+gem 'omniauth'
+
+gem 'devise'
+gem 'devise_token_auth' # Token based authentication for Rails JSON APIs
+
+#Facebook OAuth2 Strategy for OmniAuth.
+gem 'omniauth-facebook'
+
 gem 'pg'
 
 gem 'figaro'
