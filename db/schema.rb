@@ -16,15 +16,6 @@ ActiveRecord::Schema.define(version: 20150622214905) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "access_tokens", force: :cascade do |t|
-    t.integer  "user_id"
-    t.string   "token"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "access_tokens", ["user_id"], name: "index_access_tokens_on_user_id", using: :btree
-
   create_table "blobs", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "blobID"
@@ -37,9 +28,8 @@ ActiveRecord::Schema.define(version: 20150622214905) do
   create_table "documents", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "documentID"
-    t.text     "documentData"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
