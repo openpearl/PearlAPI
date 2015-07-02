@@ -27,7 +27,7 @@ class Api::V1::DeviseControllerMod::RegistrationsController < DeviseTokenAuth::R
             tvResponseJSON = @resource.create_tv_user(sign_up_params, @@tvAdminAPI)
             if !tvResponseJSON["error"]
               @resource.save
-              @resource.initialize_tv_user_document(@resource, @@tvVaultID, @@tvAdminAPI, @@tvSchemaID)
+              @resource.initialize_tv_user_document( @@tvVaultID, @@tvAdminAPI )
               unless @resource.confirmed?
                 # user will require email authentication
                 @resource.send_confirmation_instructions({

@@ -1,15 +1,13 @@
 class Api::V1::DocumentsController < ApplicationController
-  # PATCH/PUT /documents/1
-  # PATCH/PUT /documents/1.json
+  before_action :set_document
+  
   
   def update
-    document = current_user.document
-
-    if not document.nil?
-      doc = document.update_document(document_params, document.documentID, @@tvVaultID, @@tvAdminAPI)
+    if not @document.nil?
+      modifiedDoc = @document.update_tv_document(document_params, @@tvVaultID, @@tvAdminAPI)
       render json: {
                       status: 'success',
-                      data:   doc.as_json
+                      data:   modifiedDoc.as_json
                     }
     else
       render json: {
@@ -19,8 +17,41 @@ class Api::V1::DocumentsController < ApplicationController
     end
   end
 
-  private
 
+  def reset
+    if not @document.nil?
+      tvResponseJSON = @document.reset_tv_document(@@tvVaultID, @@tvAdminAPI)
+      if not tvResponseJSON["error"]
+        render json: {
+                        status: 'success',
+                        data: {}
+                      }
+      else
+        render json: {
+                        status: 'error',
+                        message: 'Could not reset document'
+                      }
+      end              
+    else
+      render json: {
+                      status: 'error',
+                      message: 'Document does not exist!'
+                    }
+    end
+  end
+
+
+
+  private
+    
+    def set_document
+      begin
+        @document = current_user.document
+      rescue 
+        @document = nil
+      end
+    end
+    
     def document_params
       params.except(:format, :controller, :action)
     end
