@@ -30,15 +30,12 @@ class User < ActiveRecord::Base
   #Initializes a document for a new user. This document holds all their personal information
   #as base64 encoded JSON strings.
   #TODO: Update this document encoding if schema changes
-  def initialize_tv_user_document(user, vault_id, api_key, schema_id)
-    tvresponse =  `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents \
-                  -u #{api_key}: \
-                  -X POST \
-                  -d "document=e30="`
-    tvResponseJSON = JSON.parse(tvresponse)
+  def initialize_tv_user_document(vault_id, api_key)
+    tvDocument = Document.new(:user_id => self.id)    
+    tvResponseJSON = tvDocument.create_tv_document(vault_id, api_key)
     tvDocumentID = tvResponseJSON["document_id"]
-    userID = user.id
-    tvDocument = Document.create(:documentID => tvDocumentID, :user_id => userID)    
+    tvDocument.documentID = tvDocumentID
+    tvDocument.save  
   end
 
 end
