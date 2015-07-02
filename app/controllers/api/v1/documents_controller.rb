@@ -2,9 +2,43 @@ class Api::V1::DocumentsController < ApplicationController
   before_action :set_document
   
   
+  def read
+    if not @document.nil?
+      tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
+      render json: {
+                      status: 'success',
+                      data:   tvDocument
+                    }
+    else
+      render json: {
+                      status: 'error',
+                      message: 'Document does not exist!'
+                    }
+    end
+  end
+  
+  # Queries the TrueVault document for the values associated with the keys as specified 
+  # in document_params. 
+  # Returns a json hash of all the key-value pairs found in the TrueVault document
+  def query
+    if not @document.nil?
+      tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, document_params)
+      render json: {
+                      status: 'success',
+                      data:   tvDocument
+                    }
+    else
+      render json: {
+                      status: 'error',
+                      message: 'Document does not exist!'
+                    }
+    end
+  end
+  
+  
   def update
     if not @document.nil?
-      modifiedDoc = @document.update_tv_document(document_params, @@tvVaultID, @@tvAdminAPI)
+      modifiedDoc = @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
       render json: {
                       status: 'success',
                       data:   modifiedDoc.as_json
