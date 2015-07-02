@@ -10,6 +10,8 @@ Rails.application.routes.draw do
       resources :users, except: [:new, :edit]
       patch 'documents'   => 'documents#update', as: :document_update
       patch 'documents/reset'   => 'documents#reset', as: :document_reset
+      get 'documents'   => 'documents#read', as: :document_read
+      post 'documents'   => 'documents#query', as: :document_query
       post 'communications'   => 'communications#converse', as: :communicate
     end
   end

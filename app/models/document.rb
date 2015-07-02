@@ -14,8 +14,10 @@ class Document < ActiveRecord::Base
   
   
   # Reads the TrueVault document belonging to the current user.
-  # Returns a json representation of the TrueVault doucment.
-  def read_tv_document(vault_id, api_key)
+  # If parameters corresponding to keys of the document json hash are given, returns
+  # a json of all the values corresponding to the keys.
+  # If parameters are not given, returns a json representation of the whole TrueVault doucment.
+  def read_tv_document(vault_id, api_key, document_keys = false)
     # Retrieves the TrueVault document for the current user and returns a base 64 encoded JSON string
     tvDocBase64 = `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents/#{self.documentID} \
                   -X GET \
@@ -25,7 +27,19 @@ class Document < ActiveRecord::Base
     tvDocDecode = Base64.decode64(tvDocBase64) 
     
     # Parse the decoded string as a JSON hash
-    tvDocDecodeJson = JSON.parse(tvDocDecode)   
+    tvDocDecodeJson = JSON.parse(tvDocDecode)
+    
+    if document_keys
+      queryData = {}
+      document_keys["keys"].each do |key|
+        if tvDocDecodeJson.key?(key) 
+          queryData[key] = tvDocDecodeJson[key]
+        end 
+      end
+      return queryData 
+    else
+      return tvDocDecodeJson
+    end
   end
 
 
@@ -35,7 +49,7 @@ class Document < ActiveRecord::Base
   # document which is found to have a matching key are modified to reflect
   # the value of assoicated with the key passed by the parameter.
   # Returns a json hash of the updated document
-  def update_tv_document(document_params, vault_id, api_key)
+  def update_tv_document(vault_id, api_key, document_params)
     tvDocDecodeJson = self.read_tv_document(vault_id, api_key)
     
     # For each key in the parameters, check if it already exists in the Truevault document.
