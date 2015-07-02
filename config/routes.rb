@@ -8,7 +8,8 @@ Rails.application.routes.draw do
         registrations:  'api/v1/devise_controller_mod/registrations'
       }
       resources :users, except: [:new, :edit]
-      patch 'documents'   => 'documents#update', as: :document
+      patch 'documents'   => 'documents#update', as: :document_update
+      patch 'documents/reset'   => 'documents#reset', as: :document_reset
       post 'communications'   => 'communications#converse', as: :communicate
     end
   end
