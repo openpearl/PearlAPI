@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
   has_one :document, dependent: :destroy
   has_one :access_token, dependent: :destroy
+  has_one :goal, dependent: :destroy
   has_many :blobs, dependent: :destroy
   
   #Setting up user attributes validation
@@ -36,6 +37,11 @@ class User < ActiveRecord::Base
     tvDocumentID = tvResponseJSON["document_id"]
     tvDocument.documentID = tvDocumentID
     tvDocument.save  
+  end
+
+  def initialize_user_goals
+    goals = Goal.new(:user_id => self.id)    
+    goals.save
   end
 
 end
