@@ -8,7 +8,9 @@ Rails.application.routes.draw do
         registrations:  'api/v1/devise_controller_mod/registrations'
       }
       mount PearlEngine::Engine, at: "/pearl"
-      resources :users, except: [:new, :edit]
+      # resources :settings, except: [:new, :edit]
+      get 'goals'              => 'settings#showGoals', as: :goals
+      patch 'goals/update'     => 'settings#updateGoals', as: :goals_update
       get 'documents'          => 'documents#read', as: :document_read
       patch 'documents'        => 'documents#update', as: :document_update
       patch 'documents/reset'  => 'documents#reset', as: :document_reset
