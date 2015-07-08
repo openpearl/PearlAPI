@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150707183941) do
+ActiveRecord::Schema.define(version: 20150708195426) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,16 @@ ActiveRecord::Schema.define(version: 20150707183941) do
   end
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
+
+  create_table "goals", force: :cascade do |t|
+    t.integer  "user_id"
+    t.boolean  "be_more_active", default: false
+    t.boolean  "lose_weight",    default: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "goals", ["user_id"], name: "index_goals_on_user_id", using: :btree
 
   create_table "pearl_engine_pearl_modules", force: :cascade do |t|
     t.string   "type"
