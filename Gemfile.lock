@@ -5,6 +5,12 @@ GIT
   specs:
     openpearl_move (0.1.0)
 
+PATH
+  remote: /Users/shanethomas/Desktop/PearlEngine
+  specs:
+    pearl_engine (0.0.1)
+      rails (~> 4.2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -153,6 +159,7 @@ DEPENDENCIES
   omniauth
   omniauth-facebook
   openpearl_move!
+  pearl_engine!
   pg
   rails (= 4.2.1)
   rails-api

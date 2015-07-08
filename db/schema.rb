@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150622214905) do
+ActiveRecord::Schema.define(version: 20150707183941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,14 +34,21 @@ ActiveRecord::Schema.define(version: 20150622214905) do
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
 
+  create_table "pearl_engine_pearl_modules", force: :cascade do |t|
+    t.string   "type"
+    t.integer  "use_count",  default: 0, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
   create_table "users", force: :cascade do |t|
-    t.string   "provider",                            null: false
-    t.string   "uid",                    default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "provider",                               null: false
+    t.string   "uid",                    default: "",    null: false
+    t.string   "encrypted_password",     default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -54,6 +61,8 @@ ActiveRecord::Schema.define(version: 20150622214905) do
     t.string   "nickname"
     t.string   "image"
     t.string   "email"
+    t.boolean  "be_more_active",         default: false
+    t.boolean  "lose_weight",            default: false
     t.text     "tokens"
     t.datetime "created_at"
     t.datetime "updated_at"

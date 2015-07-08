@@ -7,12 +7,13 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
         registrations:  'api/v1/devise_controller_mod/registrations'
       }
+      mount PearlEngine::Engine, at: "/pearl"
       resources :users, except: [:new, :edit]
-      patch 'documents'   => 'documents#update', as: :document_update
-      patch 'documents/reset'   => 'documents#reset', as: :document_reset
-      get 'documents'   => 'documents#read', as: :document_read
-      post 'documents'   => 'documents#query', as: :document_query
-      post 'communications'   => 'communications#converse', as: :communicate
+      get 'documents'          => 'documents#read', as: :document_read
+      patch 'documents'        => 'documents#update', as: :document_update
+      patch 'documents/reset'  => 'documents#reset', as: :document_reset
+      post 'documents'         => 'documents#query', as: :document_query
+      post 'communications'    => 'communications#converse', as: :communicate
     end
   end
   

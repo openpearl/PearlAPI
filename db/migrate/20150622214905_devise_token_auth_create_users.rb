@@ -38,6 +38,12 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.string :nickname
       t.string :image
       t.string :email
+      
+      
+      ## User Goals
+      t.boolean :be_more_active, :default => false
+      t.boolean :lose_weight, :default => false
+
 
       ## Tokens
       t.text :tokens
