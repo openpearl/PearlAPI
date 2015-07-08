@@ -1,19 +1,14 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.1'
+gem 'rails'
 
 gem 'rails-api'
 
 gem 'spring', :group => :development
 
-
 gem 'omniauth'
-
 gem 'devise'
 gem 'devise_token_auth' # Token based authentication for Rails JSON APIs
-
-#Facebook OAuth2 Strategy for OmniAuth.
-gem 'omniauth-facebook'
 
 gem 'pg'
 
@@ -25,7 +20,7 @@ gem 'bcrypt'
 gem 'openpearl_move', :git => 'git://github.com/openpearl/openpearl_move.git', :branch => 'develop'
 # gem 'openpearl_move'
 
-gem 'pearl_engine', path: "/Users/shanethomas/Desktop/PearlEngine"
+gem 'pearl_engine', path: "/Users/admin/Desktop/PearlEngine"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
