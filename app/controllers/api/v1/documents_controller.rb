@@ -7,6 +7,7 @@ class Api::V1::DocumentsController < ApplicationController
       tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
       render json: {
                       status: 'success',
+                      message:  'Document was successfully retrieved.',
                       data:   tvDocument
                     }
     else
@@ -23,9 +24,11 @@ class Api::V1::DocumentsController < ApplicationController
   def query
     if not @document.nil?
       tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, document_params)
+      current_user.context = tvDocument
       render json: {
                       status: 'success',
-                      data:   tvDocument
+                      message:  'Document was successfully queried.',
+                      data:   current_user.context
                     }
     else
       render json: {
@@ -37,17 +40,24 @@ class Api::V1::DocumentsController < ApplicationController
   
   
   def update
-    if not @document.nil?
-      modifiedDoc = @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
+    if document_params["steps"].nil?
       render json: {
                       status: 'success',
-                      data:   modifiedDoc.as_json
+                      message: 'No new data to add'
                     }
     else
-      render json: {
-                      status: 'error',
-                      message: 'Document does not exist!'
-                    }
+      if not @document.nil?
+        @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
+        render json: {
+                        status: 'success',
+                        message:  'Document was successfully updated.'
+                      }
+      else
+        render json: {
+                        status: 'error',
+                        message: 'Document does not exist!'
+                      }
+      end
     end
   end
 
@@ -58,6 +68,7 @@ class Api::V1::DocumentsController < ApplicationController
       if not tvResponseJSON["error"]
         render json: {
                         status: 'success',
+                        message:  'Document was successfully reset.',
                         data: {}
                       }
       else
