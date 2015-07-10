@@ -58,7 +58,18 @@ class Document < ActiveRecord::Base
     document_params.keys.each do |key|
       if tvDocDecodeJson.key?(key) and tvDocDecodeJson[key].class == Array
         document_params[key].each do |value|
-          tvDocDecodeJson[key].append(value)
+          exists = false
+          tvDocDecodeJson[key].each do |check|
+            if value["UUID"] == check["UUID"]
+              value.keys.each do |replace|
+                check[replace] = value[replace]
+              end
+              exists = true     
+            end       
+          end
+          if !exists
+            tvDocDecodeJson[key].append(value)
+          end   
         end
       else
         tvDocDecodeJson[key] = document_params[key]
