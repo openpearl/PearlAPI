@@ -4,8 +4,9 @@ class CreateGoals < ActiveRecord::Migration
       t.belongs_to :user, index: true
 
       ## User Goals
-      t.boolean :be_more_active, :default => false
-      t.boolean :lose_weight, :default => false
+      t.text :be_more_active, :default => '{"name": "Be more active", "checked": false}'
+      t.text :lose_weight, :default => '{"name": "Lose weight", "checked": false}'
+
 
       t.timestamps null: false
     end

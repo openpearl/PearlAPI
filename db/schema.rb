@@ -36,10 +36,10 @@ ActiveRecord::Schema.define(version: 20150708195426) do
 
   create_table "goals", force: :cascade do |t|
     t.integer  "user_id"
-    t.boolean  "be_more_active", default: false
-    t.boolean  "lose_weight",    default: false
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.text     "be_more_active", default: "{\"name\": \"Be more active\", \"checked\": false}"
+    t.text     "lose_weight",    default: "{\"name\": \"Lose weight\", \"checked\": false}"
+    t.datetime "created_at",                                                                    null: false
+    t.datetime "updated_at",                                                                    null: false
   end
 
   add_index "goals", ["user_id"], name: "index_goals_on_user_id", using: :btree
@@ -52,13 +52,13 @@ ActiveRecord::Schema.define(version: 20150708195426) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "provider",                               null: false
-    t.string   "uid",                    default: "",    null: false
-    t.string   "encrypted_password",     default: "",    null: false
+    t.string   "provider",                            null: false
+    t.string   "uid",                    default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer  "sign_in_count",          default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -71,8 +71,6 @@ ActiveRecord::Schema.define(version: 20150708195426) do
     t.string   "nickname"
     t.string   "image"
     t.string   "email"
-    t.boolean  "be_more_active",         default: false
-    t.boolean  "lose_weight",            default: false
     t.text     "tokens"
     t.datetime "created_at"
     t.datetime "updated_at"
