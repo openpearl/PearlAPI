@@ -8,12 +8,12 @@ class Api::V1::SettingsController < ApplicationController
 
   # Controller actions for showing and updating user goals (such as being more active, losing weight, etc)
   def showGoals 
-    render json: @goals, :except=>  [:id, :user_id, :created_at, :updated_at]
+    render json: @goals
   end
 
   def updateGoals
     @goals.update(goal_params)
-    render json: @goals, :except=>  [:id, :user_id, :created_at, :updated_at]
+    render json: @goals
   end
 
 
