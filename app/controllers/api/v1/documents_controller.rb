@@ -1,5 +1,5 @@
 class Api::V1::DocumentsController < ApplicationController
-  before_action :set_document
+  before_action :get_document
   
   
   def read
@@ -24,11 +24,10 @@ class Api::V1::DocumentsController < ApplicationController
   def query
     if not @document.nil?
       tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, document_params)
-      current_user.context = tvDocument
       render json: {
                       status: 'success',
                       message:  'Document was successfully queried.',
-                      data:   current_user.context
+                      data:   tvDocument
                     }
     else
       render json: {
@@ -40,7 +39,7 @@ class Api::V1::DocumentsController < ApplicationController
   
   
   def update
-    if document_params["steps"].nil?
+    if document_params.keys.empty?
       render json: {
                       status: 'success',
                       message: 'No new data to add'
@@ -89,7 +88,7 @@ class Api::V1::DocumentsController < ApplicationController
 
   private
     
-    def set_document
+    def get_document
       begin
         @document = current_user.document
       rescue 
