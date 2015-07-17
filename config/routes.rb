@@ -15,7 +15,9 @@ Rails.application.routes.draw do
       patch 'documents'        => 'documents#update', as: :document_update
       patch 'documents/reset'  => 'documents#reset', as: :document_reset
       post 'documents'         => 'documents#query', as: :document_query
-      post 'communications'    => 'communications#converse', as: :communicate
+      post 'converse'           => 'conversations#converse', as: :converse
+      get 'context'            => 'conversations#getContextUpdateRequirements', as: :context
+      post 'context/sync'      => 'conversations#syncContext', as: :sync 
     end
   end
   
