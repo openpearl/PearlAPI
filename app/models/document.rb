@@ -14,10 +14,10 @@ class Document < ActiveRecord::Base
   
   
   # Reads the TrueVault document belonging to the current user.
-  # If parameters corresponding to keys of the document json hash are given, returns
-  # a json of all the values corresponding to the keys.
+  # If a hash of context requirements for a module are given, returns
+  # a json of all the values corresponding to each context requirement.
   # If parameters are not given, returns a json representation of the whole TrueVault doucment.
-  def read_tv_document(vault_id, api_key, document_keys = false)
+  def read_tv_document(vault_id, api_key, context_requirements = false)
     # Retrieves the TrueVault document for the current user and returns a base 64 encoded JSON string
     tvDocBase64 = `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents/#{self.documentID} \
                   -X GET \
@@ -27,11 +27,11 @@ class Document < ActiveRecord::Base
     tvDocDecode = Base64.decode64(tvDocBase64) 
     
     # Parse the decoded string as a JSON hash
-    tvDocDecodeJson = JSON.parse(tvDocDecode)
+    tvDocDecodeJson = JSON.parse(tvDocDecode).with_indifferent_access
     
-    if document_keys
+    if context_requirements
       queryData = {}
-      document_keys["keys"].each do |key|
+      context_requirements.keys.each do |key|
         if tvDocDecodeJson.key?(key) 
           queryData[key] = tvDocDecodeJson[key]
         end 
@@ -56,24 +56,27 @@ class Document < ActiveRecord::Base
     # If the key exists and its value is an array, append the new values.
     # Otherwise, update the key-value pair or add it if it does not exist.
     document_params.keys.each do |key|
-      if tvDocDecodeJson.key?(key) and tvDocDecodeJson[key].class == Array
-        document_params[key].each do |value|
-          exists = false
-          tvDocDecodeJson[key].each do |check|
-            if value["UUID"] == check["UUID"]
-              value.keys.each do |replace|
-                check[replace] = value[replace]
-              end
-              exists = true     
-            end       
+      if not document_params[key].nil?
+        if tvDocDecodeJson.key?(key) and tvDocDecodeJson[key].class == Array
+          document_params[key].each do |value|
+            exists = false
+            tvDocDecodeJson[key].each do |check|
+              if value["UUID"] == check["UUID"]
+                value.keys.each do |replace|
+                  check[replace] = value[replace]
+                end
+                exists = true     
+              end       
+            end
+            if !exists
+              tvDocDecodeJson[key].append(value)
+            end   
           end
-          if !exists
-            tvDocDecodeJson[key].append(value)
-          end   
+        else
+          tvDocDecodeJson[key] = document_params[key]
         end
-      else
-        tvDocDecodeJson[key] = document_params[key]
       end
+        
     end      
     
     # Encode the updated document as a base 64 encoded JSON string.
@@ -110,5 +113,23 @@ class Document < ActiveRecord::Base
     
     # Parse and return a json hash of the TrueVault response
     tvResponseJSON = JSON.parse(tvResponse) 
+  end
+
+
+  # Given the context requirements, gets only the most recent datapoints stored in TrueVault for each context.
+  def get_latest_datapoints(vault_id, api_key, context_requirements)
+    queryData = self.read_tv_document(vault_id, api_key, context_requirements)
+    queryData.keys.each do |key|
+      if queryData[key].class == Array and not queryData[key].empty?  
+        latestPoint = queryData[key][0]
+        queryData[key].each do |value|
+          if value["endDate"] > latestPoint["endDate"]
+            latestPoint = value
+          end
+          queryData[key] = latestPoint
+        end
+      end
+    end
+    return queryData
   end
 end

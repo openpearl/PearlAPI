@@ -1,7 +1,7 @@
 
 # Place controller actions for handling user settings in this file
 class Api::V1::SettingsController < ApplicationController
-  before_action :set_goals
+  before_action :get_goals
   before_action :authenticate_user!
 
 
@@ -19,7 +19,7 @@ class Api::V1::SettingsController < ApplicationController
 
   private
 
-      def set_goals
+      def get_goals
         begin
           @goals = current_user.goal
         rescue 
