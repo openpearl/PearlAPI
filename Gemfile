@@ -4,7 +4,7 @@ ruby '2.2.2'
 
 gem 'rails'
 
-# gem 'thin'
+gem 'thin'
 
 gem 'rails-api'
 
