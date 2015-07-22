@@ -1,20 +1,30 @@
 class Document < ActiveRecord::Base
   belongs_to :user
   
+  # Retuns a base 64 encoded json string which represents the default user document on Truevault
+  def get_base_truevault_doc
+    filePath = Rails.root.join("lib", "base_truevault_doc.json")
+    file = File.read(filePath)
+    fileToJsonString = JSON.parse(file).to_json
+    fileToBase64 = Base64.encode64(fileToJsonString)
+  end
+
+
   # Creates a new document in TrueVault with an empty hash as it's value.
   # Returns a json representation of the TrueVault response.
   def create_tv_document(vault_id, api_key)
+    baseTVDoc = self.get_base_truevault_doc
     tvResponse =  `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents \
                   -u #{api_key}: \
                   -X POST \
-                  -d "document=e30="`
+                  -d "document=#{baseTVDoc}"`
     # Parse and return a json hash of the TrueVault response
     tvResponseJSON = JSON.parse(tvResponse)   
   end
   
   
   # Reads the TrueVault document belonging to the current user.
-  # If a hash of context requirements for a module are given, returns
+  # If a hash of context requirements for a plugin are given, returns
   # a json of all the values corresponding to each context requirement.
   # If parameters are not given, returns a json representation of the whole TrueVault doucment.
   def read_tv_document(vault_id, api_key, context_requirements = false)
@@ -106,10 +116,11 @@ class Document < ActiveRecord::Base
   
   # Reset the TrueVault document to an empty json hash
   def reset_tv_document(vault_id, api_key)
+    baseTVDoc = self.get_base_truevault_doc
     tvResponse = `curl https://api.truevault.com/v1/vaults/#{vault_id}/documents/#{self.documentID} \
     -u #{api_key}: \
     -X PUT \
-    -d "document=e30="`
+    -d "document=#{baseTVDoc}"`
     
     # Parse and return a json hash of the TrueVault response
     tvResponseJSON = JSON.parse(tvResponse) 
@@ -132,4 +143,5 @@ class Document < ActiveRecord::Base
     end
     return queryData
   end
+
 end
