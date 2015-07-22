@@ -1,16 +1,28 @@
 source 'https://rubygems.org'
 
-
-gem 'rails', '4.2.1'
+gem 'rails'
 
 gem 'rails-api'
 
+gem 'rack-cors', :require => 'rack/cors'
+
 gem 'spring', :group => :development
 
+gem 'omniauth'
+gem 'devise'
+gem 'devise_token_auth' # Token based authentication for Rails JSON APIs
 
 gem 'pg'
 
+gem 'figaro'
 
+gem 'bcrypt'
+
+# Our plugins.
+gem 'openpearl_move', :git => 'git://github.com/openpearl/openpearl_move.git', :branch => 'develop'
+# gem 'openpearl_move'
+
+gem 'pearl_engine', path: "/Users/admin/Desktop/PearlEngine"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
