@@ -10,14 +10,14 @@ Rails.application.routes.draw do
       mount PearlEngine::Engine, at: "/pearl"
       # resources :settings, except: [:new, :edit]
       get 'goals'              => 'settings#showGoals', as: :goals
-      patch 'goals/update'     => 'settings#updateGoals', as: :goals_update
+      patch 'goals'            => 'settings#updateGoals', as: :goals_update
       get 'documents'          => 'documents#read', as: :document_read
       patch 'documents'        => 'documents#update', as: :document_update
       patch 'documents/reset'  => 'documents#reset', as: :document_reset
       post 'documents'         => 'documents#query', as: :document_query
-      post 'converse'           => 'conversations#converse', as: :converse
+      post 'converse'          => 'conversations#converse', as: :converse
       get 'context'            => 'conversations#getContextUpdateRequirements', as: :context
-      post 'context/sync'      => 'conversations#syncContext', as: :sync 
+      post 'context'           => 'conversations#syncContext', as: :sync 
     end
   end
   
