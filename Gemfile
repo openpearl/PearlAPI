@@ -1,8 +1,14 @@
 source 'https://rubygems.org'
 
+ruby '2.2.2'
+
 gem 'rails'
 
+# gem 'thin'
+
 gem 'rails-api'
+
+gem 'rails_12factor'
 
 gem 'rack-cors', :require => 'rack/cors'
 
