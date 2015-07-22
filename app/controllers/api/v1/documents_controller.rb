@@ -1,6 +1,6 @@
 class Api::V1::DocumentsController < ApplicationController
   before_action :get_document
-  
+  before_action :authenticate_user!
   
   def read
     if not @document.nil?
