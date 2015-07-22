@@ -1,12 +1,7 @@
 GIT
-  remote: git://github.com/openpearl/openpearl_move.git
-  revision: da96ca35194f1daa5f0430dd55e54307e071079d
-  branch: develop
-  specs:
-    openpearl_move (0.1.0)
-
-PATH
-  remote: /Users/admin/Desktop/PearlEngine
+  remote: git://github.com/openpearl/PearlEngine.git
+  revision: d0639232dc1f4051da7d73baa35539d48c26da99
+  branch: master
   specs:
     pearl_engine (0.0.1)
       rails (~> 4.2.1)
@@ -85,6 +80,7 @@ GEM
     orm_adapter (0.5.0)
     pg (0.18.2)
     rack (1.6.1)
+    rack-cors (0.4.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.1)
@@ -140,9 +136,9 @@ DEPENDENCIES
   devise_token_auth
   figaro
   omniauth
-  openpearl_move!
   pearl_engine!
   pg
+  rack-cors
   rails
   rails-api
   spring
