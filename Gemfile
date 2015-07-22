@@ -4,6 +4,8 @@ gem 'rails'
 
 gem 'rails-api'
 
+gem 'rack-cors', :require => 'rack/cors'
+
 gem 'spring', :group => :development
 
 gem 'omniauth'
@@ -16,7 +18,7 @@ gem 'figaro'
 
 gem 'bcrypt'
 
-# Our modules.
+# Our plugins.
 gem 'openpearl_move', :git => 'git://github.com/openpearl/openpearl_move.git', :branch => 'develop'
 # gem 'openpearl_move'
 
