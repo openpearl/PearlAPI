@@ -4,7 +4,7 @@ The Pearl API. Handles server side logic and communication with TrueVault.
 Setup:
 1. In the root directory of the API, run "bundle install" to install the gem dependencies
 
-2. In app/config directory, create two files: secretes.yml and application.yml.
+2. In app/config directory, create two files: secrets.yml and application.yml.
     NOTE: Do NOT commit these files. Only you should have access to these files and their contents. 
     These files are meant to contain private information for your eyes only!
 
