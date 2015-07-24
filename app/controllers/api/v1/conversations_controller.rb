@@ -3,8 +3,19 @@ class Api::V1::ConversationsController < ApplicationController
   before_action :get_document
   before_action :authenticate_user!
 
+  def foo
+    render json: @plugin.initializeContext({},current_user.id)
+
+  end
+
+  def bar
+    render json: @plugin.converse("root", current_user.id)
+  end
+    
+
+
   def converse
-    convHash = @plugin.converse(context_params["cardID"])
+    convHash = @plugin.converse(context_params["cardID"], current_user.id)
       #Checks to see if the conversation node is a leaf by checking whether or not
       #it has children. If it does have children, then the conversation continues.
       #If not, then we know that the conversation has come to an end.
@@ -13,9 +24,9 @@ class Api::V1::ConversationsController < ApplicationController
         # Filter out any invalid children 
         filteredCardIDs = []
         convHash["childrenCardIDs"].each do |childCardID|
-          childCard = @plugin.converse(childCardID)
+          childCard = @plugin.converse(childCardID, current_user.id)
           if not childCard["filters"].nil?
-            if @plugin.pass_filter?(childCard["filters"])
+            if @plugin.pass_filter?(childCard["filters"], current_user.id)
               filteredCardIDs.push(childCardID)
             end
           else
@@ -25,7 +36,7 @@ class Api::V1::ConversationsController < ApplicationController
 
 
         #Gets the next conversation node corresponding to the first valid child of the current node.
-        childMessage = @plugin.converse(filteredCardIDs[0])
+        childMessage = @plugin.converse(filteredCardIDs[0], current_user.id)
         
         #Checks who the speaker for the next conversation node is.
         childSpeaker = childMessage["speaker"]
@@ -38,7 +49,7 @@ class Api::V1::ConversationsController < ApplicationController
         #next conversation nodes to an array.
         if childSpeaker=="client"
           filteredCardIDs.each do |cardID|
-            childrenArray.push(@plugin.converse(cardID))
+            childrenArray.push(@plugin.converse(cardID), current_user.id)
           end  
         
         #If the speaker for the next conversation node is not the client, then we simply
@@ -48,7 +59,7 @@ class Api::V1::ConversationsController < ApplicationController
           numberOfchildren = filteredCardIDs.length
           randomChild = Random.rand(numberOfchildren)
           cardID = filteredCardIDs[randomChild]
-          childCard = @plugin.converse(cardID)
+          childCard = @plugin.converse(cardID, current_user.id)
 
           if childCard["messages"].class == Array
             numberOfMessages = childCard["messages"].length
@@ -104,6 +115,7 @@ class Api::V1::ConversationsController < ApplicationController
     # Return the final hash which should include all the information that the client will need to retrieve the
     # context data for the plugin.
     render json: contextUpdateRequirements
+    
   end
 
 
@@ -114,7 +126,7 @@ class Api::V1::ConversationsController < ApplicationController
       @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, context_params)
       contextRequirements = @plugin.getContextRequirements.with_indifferent_access
       contextData = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
-      data = @plugin.initializeContext(contextData)
+      @plugin.initializeContext(contextData, current_user.id)
       render json: {
         status: 'success',
         message: 'Successfully synced data. Conversation is ready to begin.'
@@ -124,6 +136,7 @@ class Api::V1::ConversationsController < ApplicationController
         status: 'error',
         message: 'Document does not exist!'
       }
+
     end
   end
 
