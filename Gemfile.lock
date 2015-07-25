@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/openpearl/PearlEngine.git
-  revision: a048f439939a0913fbef8fa71e0882144c9ee57a
+  revision: ee8392f78444a4cf618399bb8db2552ec5722e8c
   branch: master
   specs:
     pearl_engine (0.0.1)

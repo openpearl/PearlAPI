@@ -3,16 +3,6 @@ class Api::V1::ConversationsController < ApplicationController
   before_action :get_document
   before_action :authenticate_user!
 
-  def foo
-    render json: @plugin.initializeContext({},current_user.id)
-
-  end
-
-  def bar
-    render json: @plugin.converse("root", current_user.id)
-  end
-
-
 
   def converse
     convHash = @plugin.converse(context_params["cardID"], current_user.id)

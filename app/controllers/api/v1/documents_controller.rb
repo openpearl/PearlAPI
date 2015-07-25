@@ -68,7 +68,6 @@ class Api::V1::DocumentsController < ApplicationController
         render json: {
                         status: 'success',
                         message:  'Document was successfully reset.',
-                        data: {}
                       }
       else
         render json: {
