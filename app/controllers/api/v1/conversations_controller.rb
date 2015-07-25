@@ -3,72 +3,59 @@ class Api::V1::ConversationsController < ApplicationController
   before_action :get_document
   before_action :authenticate_user!
 
+
   def converse
-    convHash = @plugin.converse(context_params["cardID"])
-      #Checks to see if the conversation node is a leaf by checking whether or not
-      #it has children. If it does have children, then the conversation continues.
-      #If not, then we know that the conversation has come to an end.
-      if not convHash["childrenCardIDs"].nil? 
-        
-        # Filter out any invalid children 
-        filteredCardIDs = []
-        convHash["childrenCardIDs"].each do |childCardID|
-          childCard = @plugin.converse(childCardID)
-          if not childCard["filters"].nil?
-            if @plugin.pass_filter?(childCard["filters"])
-              filteredCardIDs.push(childCardID)
-            end
-          else
+    convHash = @plugin.converse(context_params["cardID"], current_user.id)
+    #Checks to see if the conversation node is a leaf by checking whether or not
+    #it has children. If it does have children, then the conversation continues.
+    #If not, then we know that the conversation has come to an end.
+    if not convHash["childrenCardIDs"].nil?
+
+      # Filter out any invalid children
+      filteredCardIDs = []
+      convHash["childrenCardIDs"].each do |childCardID|
+        childCard = @plugin.converse(childCardID, current_user.id)
+        if not childCard["filters"].nil?
+          if @plugin.pass_filter?(childCard["filters"], current_user.id)
             filteredCardIDs.push(childCardID)
           end
-        end
-
-
-        #Gets the next conversation node corresponding to the first valid child of the current node.
-        childMessage = @plugin.converse(filteredCardIDs[0])
-        
-        #Checks who the speaker for the next conversation node is.
-        childSpeaker = childMessage["speaker"]
-        
-
-        #Instantiate a children array for keeping track of a node's children.
-        childrenArray = []
-        
-        #If the speaker for the next conversation nodes is the client, then append all the
-        #next conversation nodes to an array.
-        if childSpeaker=="client"
-          filteredCardIDs.each do |cardID|
-            childrenArray.push(@plugin.converse(cardID))
-          end  
-        
-        #If the speaker for the next conversation node is not the client, then we simply
-        #choose a node from the children conversation nodes to proceed with in our conversation.
-        #We also pick an AI message randomly to add variety to the conversation.
         else
-          numberOfchildren = filteredCardIDs.length
-          randomChild = Random.rand(numberOfchildren)
-          cardID = filteredCardIDs[randomChild]
-          childCard = @plugin.converse(cardID)
-
-          if childCard["messages"].class == Array
-            numberOfMessages = childCard["messages"].length
-            randomMessage = Random.rand(numberOfMessages)
-            childCard["messages"] = childCard["messages"][randomMessage]
-          end
-          
-          childrenArray.push(childCard)
+          filteredCardIDs.push(childCardID)
         end
-        
-        #Save the data about the children conversation nodes in the conversation hash under the 
-        #key of "childrenCards".
-        convHash["childrenCards"] = childrenArray
-        
-        #Renders a json of the conversation hash 
-        render json: convHash
-      else
-        #Renders a null json since we are at a leaf node and there is no children.
-        render json: convHash["childrenCardIDs"]
       end
+
+
+      # If there is more than one valid child card after filtering, we choose a card
+      # randomly to proceed with in our conversation.
+      # We also pick an AI message randomly to add variety to the conversation.
+      numberOfchildren = filteredCardIDs.length
+      randomChild = Random.rand(numberOfchildren)
+      cardID = filteredCardIDs[randomChild]
+      childCard = @plugin.converse(cardID, current_user.id)
+
+      if childCard["messages"].class == Array
+        numberOfMessages = childCard["messages"].length
+        randomMessage = Random.rand(numberOfMessages)
+        childCard["messages"] = childCard["messages"][randomMessage]
+      end
+
+      # List of all the children cards of the chosen child card.
+      childrenArray = []
+      childCard["childrenCardIDs"].each do |nextCardID|
+        nextCard = @plugin.converse(nextCardID, current_user.id)
+        childrenArray.push(nextCard)
+      end
+
+      #Save the data about the children conversation nodes in the conversation hash under the
+      #key of "childrenCards".
+      childCard["childrenCards"] = childrenArray
+
+      #Renders a json of the conversation hash
+      render json: childCard
+    else
+      #Renders a null json since we are at a leaf node and there is no children.
+      render json: convHash["childrenCardIDs"]
+    end
 
   end
 
@@ -104,6 +91,7 @@ class Api::V1::ConversationsController < ApplicationController
     # Return the final hash which should include all the information that the client will need to retrieve the
     # context data for the plugin.
     render json: contextUpdateRequirements
+
   end
 
 
@@ -114,7 +102,7 @@ class Api::V1::ConversationsController < ApplicationController
       @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, context_params)
       contextRequirements = @plugin.getContextRequirements.with_indifferent_access
       contextData = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
-      data = @plugin.initializeContext(contextData)
+      @plugin.initializeContext(contextData, current_user.id)
       render json: {
         status: 'success',
         message: 'Successfully synced data. Conversation is ready to begin.'
@@ -124,6 +112,7 @@ class Api::V1::ConversationsController < ApplicationController
         status: 'error',
         message: 'Document does not exist!'
       }
+
     end
   end
 
@@ -140,7 +129,7 @@ class Api::V1::ConversationsController < ApplicationController
 
   def get_document
     begin
-      @document = current_user.document
+      @document ||= current_user.document
     rescue
       @document = nil
     end

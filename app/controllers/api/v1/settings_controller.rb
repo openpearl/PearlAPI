@@ -2,32 +2,62 @@
 # Place controller actions for handling user settings in this file
 class Api::V1::SettingsController < ApplicationController
   before_action :get_document
+  before_action :get_goals
   before_action :authenticate_user!
 
 
 
   # # Controller actions for showing and updating user goals (such as being more active, losing weight, etc)
-  # def showGoals 
-  #   render json: @goals
-  # end
+  def showGoals
+    if not @document.nil?
+      tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
+      goalsData = @goal.get_goals(tvDocument)
 
-  # def updateGoals
-  #   @goals.update(goal_params)
-  #   render json: @goals
-  # end
+      render json: {
+        status: 'success',
+        message:  'Document was successfully retrieved.',
+        data:   goalsData
+      }
+    else
+      render json: {
+        status: 'error',
+        message: 'Document does not exist!'
+      }
+    end
+  end
+
+  def updateGoals
+    if not @document.nil?
+        @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
+        render json: {
+                        status: 'success',
+                        message:  'Document was successfully updated.'
+                      }
+      else
+        render json: {
+                        status: 'error',
+                        message: 'Document does not exist!'
+                      }
+      end
+  end
 
 
   private
-    
-    def get_document
-      begin
-        @document = current_user.document
-      rescue 
-        @document = nil
-      end
+
+  def get_document
+    begin
+      @document ||= current_user.document
+    rescue
+      @document = nil
     end
-    
-    def settings_params
-      params.except(:format, :controller, :action)
-    end
+  end
+
+
+  def get_goals
+      @goal ||= Goal.new
+  end
+
+  def settings_params
+    params.except(:format, :controller, :action)
+  end
 end

@@ -68,7 +68,6 @@ class Api::V1::DocumentsController < ApplicationController
         render json: {
                         status: 'success',
                         message:  'Document was successfully reset.',
-                        data: {}
                       }
       else
         render json: {
@@ -90,7 +89,7 @@ class Api::V1::DocumentsController < ApplicationController
     
     def get_document
       begin
-        @document = current_user.document
+        @document ||= current_user.document
       rescue 
         @document = nil
       end

@@ -1,8 +1,14 @@
 source 'https://rubygems.org'
 
+ruby '2.2.2'
+
 gem 'rails'
 
+gem 'thin'
+
 gem 'rails-api'
+
+gem 'rails_12factor'
 
 gem 'rack-cors', :require => 'rack/cors'
 
@@ -19,10 +25,7 @@ gem 'figaro'
 gem 'bcrypt'
 
 # Our plugins.
-gem 'openpearl_move', :git => 'git://github.com/openpearl/openpearl_move.git', :branch => 'develop'
-# gem 'openpearl_move'
-
-gem 'pearl_engine', path: "/Users/admin/Desktop/PearlEngine"
+gem 'pearl_engine', :git => 'git://github.com/openpearl/PearlEngine.git', :branch => 'master' 
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

@@ -24,10 +24,33 @@ module PearlAPI
     config.active_record.raise_in_transactional_callbacks = true
     
     config.middleware.use Rack::MethodOverride
+
+    # TODO: Not sure if the middleware belongs in this location.
+    # Ensure Rack::Cors to run before Warden::Manager used by Devise.
+    config.middleware.use Rack::Cors do
+      allow do
+        origins '*'
+        resource '*',
+          :headers => :any,
+          :expose  => ['access-token', 'expiry', 'token-type', 'uid', 'client'],
+          :methods => [:get, :post, :put, :patch, :delete, :options]
+
+
+    # config.middleware.insert_before Warden::Manager, Rack::Cors do
+    #   allow do
+    #     origins '*'
+    #     resource '*',
+    #     :headers => :any,
+    #     :expose  => ['access-token', 'expiry', 'token-type', 'uid', 'client'],
+    #     :methods => [:get, :post, :put, :patch, :delete, :options]
+      end
+    end
     
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     
     # config.middleware.use Session Management
+
+    config.secret_key_base = Figaro.env.secret_key_base
   end
 end
