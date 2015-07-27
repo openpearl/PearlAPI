@@ -1,9 +1,9 @@
 GIT
   remote: git://github.com/openpearl/PearlEngine.git
-  revision: ee8392f78444a4cf618399bb8db2552ec5722e8c
+  revision: c780b4d9ae4b727e9927302ff7097e22bef38e8d
   branch: master
   specs:
-    pearl_engine (0.0.1)
+    pearl_engine (1.1.0)
       rails (~> 4.2.1)
 
 GEM
