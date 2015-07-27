@@ -47,4 +47,5 @@ Rails.application.configure do
   
   # Stop development from auto reloading classes
   # config.reload_classes_only_on_change = false
+
 end

@@ -1,38 +1,122 @@
 # PearlAPI
-The Pearl API. Handles server side logic and communication with TrueVault.
+The Pearl API. Handles server side logic and communication with the Pearl Client.
 
-Setup:
-1. In the root directory of the API, run "bundle install" to install the gem dependencies
 
-2. In app/config directory, create two files: secrets.yml and application.yml.
-    NOTE: Do NOT commit these files. Only you should have access to these files and their contents. 
-    These files are meant to contain private information for your eyes only!
+## For Developers:
+* Before you begin, make sure you have [Ruby 2.2+](https://www.ruby-lang.org/en/documentation/installation/) and 
+[Rails 4.2+](http://rubyonrails.org/download/) installed.
+* Sign up for a [SendGrid account](https://sendgrid.com/) (emails to users are sent using SendGrid servers). Alternatively, you can [configure the API to use a different smtp server of your choice](#configure-smtp-server). 
+* Sign up for a [TrueVault account](https://www.truevault.com/) (TrueVault serves as a HIPAA compliant database for Pearl). Afterwards, sign in and:
+    1. Create a TrueVault "admin" user.
+    2. Create at least one TrueVault vault. Creating a different vault for testing, development and production environments is recommended.
+    3. Take note of the following keys. You will need them to configure the API to work with TrueVault.
+        * `Account ID` - Found in the `Account` tab.
+        * `API Key` - Go to the `Users` tab, and click on the admin user to view the API key.
+        * `Vault ID(s)` - Found in the `Vaults` tab.
 
-    app/config/secrets.yml should contain: 
-        development:
-          secret_key_base: PUT_YOUR_SECRET_KEY_HERE
 
-        test:
-          secret_key_base: PUT_YOUR_SECRET_KEY_HERE
+### Setup
+1. Clone this repository.
+2. CD into the Pearl API root directory.
+3. Install the dependencies:
 
-        # Do not keep production secrets in the repository,
-        # instead read values from the environment.
-        production:
-          secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+    ```console
+    bundle install
+    ```
 
-    app/config/application.yml should contain:
-        TV_ACCOUNT_ID: PUT_YOUR_TRUEVAULT_ACCOUNT_ID_HERE
+4. Create the database tables:
 
-        TV_ADMIN_API_KEY: PUT_YOUR_TRUEVAULT_ADMIN_API_KEY_HERE
+    ```console
+    rake db:migrate
+    ```
 
-        development:
-          TV_VAULT_ID: PUT_YOUR_TRUEVAULT_DEVELOPMENT_VAULT_ID_HERE
+5. In the `config` directory, create an `application.yml` file. 
+    
+    **NOTE**: Do **NOT** commit this file - it is meant to contain private information for your eyes only! It *should* be ignored by default with the bundled `figaro gem`.
+    
+    ##### Example `application.yml` file:
+    
+    ```ruby
+    # config/application.yml 
+    
+    # Setting environment varibles for communicating with TrueVault:
+    TV_ACCOUNT_ID: YOUR_TRUEVAULT_ACCOUNT_ID_HERE
+    TV_ADMIN_API_KEY: YOUR_TRUEVAULT_ADMIN_API_KEY_HERE
+    
+    # Setting environment varibles for sending emails with SendGrid:
+    SENDGRID_USERNAME: YOUR_SENDGRID_USERNAME_HERE
+    SENDGRID_PASSWORD: YOUR_SENDGRID_PASSWORD_HERE
+    
+    # Secret key for devise
+    DEVISE_SECRET_KEY: YOUR_DEVISE_SECRET_KEY_HERE
+    
+    # Production database password
+    PEARLAPI_DATABASE_PASSWORD: YOUR_PEARLAPI_DATABASE_PASSWORD_HERE
+    
+    # Development environment-specific variables
+    development:
+        TV_VAULT_ID: YOUR_DEVELOPMENT_TRUEVAULT_VAULT_ID_HERE
+        SECRET_KEY_BASE: YOUR_DEVELOPMENT_SECRET_KEY_BASE_HERE
+    
+    # Test environment-specific variables
+    test: 
+        TV_VAULT_ID: YOUR_TEST_TRUEVAULT_VAULT_ID_HERE
+        SECRET_KEY_BASE: YOUR_TEST_SECRET_KEY_BASE_HERE
+              
+    # Production environment-specific variables          
+    production: 
+        TV_VAULT_ID: YOUR_PRODUCTION_TRUEVAULT_TEST_VAULT_ID_HERE
+        SECRET_KEY_BASE: YOUR_PRODUCTION_SECRET_KEY_BASE_HERE
+    ```
 
-        test: 
-          TV_VAULT_ID: PUT_YOUR_TRUEVAULT_TEST_VAULT_ID_HERE
-          
-        production: 
-          TV_VAULT_ID: PUT_YOUR_TRUEVAULT_PRODUCTION_VAULT_ID_HERE
+6. Thats it! If you want to test out the API:
 
-3. In the root directory of the API, run "rake db:create" to initialize the postgresql databases
-4. Run "rake db:migrate" to create the tables for the models
+    ```console
+    rails server
+    ```
+
+
+### Configure SMTP server
+1. In the `application.yml` file, replace
+
+    ```ruby
+    # config/application.yml
+    ...
+    # Setting environment varibles for sending emails with SendGrid:
+    SENDGRID_USERNAME: YOUR_SENDGRID_USERNAME_HERE
+    SENDGRID_PASSWORD: YOUR_SENDGRID_PASSWORD_HERE
+    ...
+    ```
+
+    with:
+
+    ```ruby
+    # config/application.yml
+    ...
+    # Setting environment varibles for sending emails:
+    CUSTOM_SMTP_SERVER_USERNAME: YOUR_USERNAME_HERE
+    CUSTOM_SMTP_SERVER_PASSWORD: YOUR_PASSWORD_HERE
+    ...
+    ```
+
+2. Update the `environment.rb` file. It should look something like the following, but may change depending on the SMTP server you choose to use.
+
+    ```ruby
+    # config/environment.rb
+    ...
+    # Configure mailer
+    ActionMailer::Base.smtp_settings = {
+      :user_name => ENV["CUSTOM_SMTP_SERVER_USERNAME"],
+      :password => ENV["CUSTOM_SMTP_SERVER_PASSWORD"],
+      :domain => 'heroku.com',
+      :address => YOUR_SMTP_ADDRESS_HERE,
+      :port => YOUR_SMTP_PORT_HERE,
+      :authentication => :plain,
+      :enable_starttls_auto => true
+    }
+    ...
+    ```
+
+
+### Deploy
+[Step-by-step instructions for deploying on Heroku](https://devcenter.heroku.com/articles/getting-started-with-ruby#introduction).
