@@ -19,15 +19,17 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
 1. Clone this repository.
 2. CD into the Pearl API root directory.
 3. Install the dependencies:
-    ```bash
+    ```console
     bundle install
     ```
 4. Create the database tables:
-    ```bash
+    ```console
     rake db:migrate
     ```
 5. In the `config` directory, create an `application.yml` file. 
-    *  **NOTE**: Do **NOT** commit this file - it is meant to contain private information for your eyes only! It *should* be ignored by default with the bundled `figaro gem`.
+    
+    **NOTE**: Do **NOT** commit this file - it is meant to contain private information for your eyes only! It *should* be ignored by default with the bundled `figaro gem`.
+    
     ##### Example `application.yml` file:
     ```ruby
     # config/application.yml 
@@ -62,7 +64,7 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
         SECRET_KEY_BASE: YOUR_PRODUCTION_SECRET_KEY_BASE_HERE
     ```
 6. Thats it! If you want to test out the API:
-    ```bash
+    ```console
     rails server
     ```
 
