@@ -86,6 +86,7 @@ CUSTOM_SMTP_SERVER_USERNAME: YOUR_USERNAME_HERE
 CUSTOM_SMTP_SERVER_PASSWORD: YOUR_PASSWORD_HERE
 ...
 ```
+
 2. Update the `environment.rb` file. It should look something like the following, but may change depending on the SMTP server you choose to use.
 ```ruby
 # config/environment.rb
