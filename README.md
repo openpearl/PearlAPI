@@ -105,4 +105,3 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
 
 ### Deploy
 [Step-by-step instructions for deploying on Heroku](https://devcenter.heroku.com/articles/getting-started-with-ruby#introduction).
-
