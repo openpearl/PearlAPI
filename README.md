@@ -19,18 +19,23 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
 1. Clone this repository.
 2. CD into the Pearl API root directory.
 3. Install the dependencies:
+
     ```console
     bundle install
     ```
+
 4. Create the database tables:
+
     ```console
     rake db:migrate
     ```
+
 5. In the `config` directory, create an `application.yml` file. 
     
     **NOTE**: Do **NOT** commit this file - it is meant to contain private information for your eyes only! It *should* be ignored by default with the bundled `figaro gem`.
     
     ##### Example `application.yml` file:
+    
     ```ruby
     # config/application.yml 
     
@@ -63,13 +68,17 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
         TV_VAULT_ID: YOUR_PRODUCTION_TRUEVAULT_TEST_VAULT_ID_HERE
         SECRET_KEY_BASE: YOUR_PRODUCTION_SECRET_KEY_BASE_HERE
     ```
+
 6. Thats it! If you want to test out the API:
+
     ```console
     rails server
     ```
 
+
 ### Configure SMTP server
 1. In the `application.yml` file, replace
+
     ```ruby
     # config/application.yml
     ...
@@ -78,7 +87,9 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
     SENDGRID_PASSWORD: YOUR_SENDGRID_PASSWORD_HERE
     ...
     ```
+
     with:
+
     ```ruby
     # config/application.yml
     ...
@@ -89,6 +100,7 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
     ```
 
 2. Update the `environment.rb` file. It should look something like the following, but may change depending on the SMTP server you choose to use.
+
     ```ruby
     # config/environment.rb
     ...
@@ -104,6 +116,7 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
     }
     ...
     ```
+
 
 ### Deploy
 [Step-by-step instructions for deploying on Heroku](https://devcenter.heroku.com/articles/getting-started-with-ruby#introduction).
