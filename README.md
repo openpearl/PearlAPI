@@ -76,8 +76,8 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
     ```
 
 
-### Configure SMTP server
-1. In the `application.yml` file, replace
+### Configure SMTP server (optional)
+1. If you wish to use a different SMTP server (instead of SendGrid), open `application.yml` file and replace
 
     ```ruby
     # config/application.yml
