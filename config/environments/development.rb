@@ -48,10 +48,4 @@ Rails.application.configure do
   # Stop development from auto reloading classes
   # config.reload_classes_only_on_change = false
 
-
-  # By default the authorization devise token headers will change after each request. The
-  # client is responsible for keeping track of the changing tokens. Change
-  # this to false to prevent the Authorization header from changing after
-  # each request.
-  config.change_headers_on_each_request = false
 end
