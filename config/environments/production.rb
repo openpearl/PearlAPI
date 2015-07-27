@@ -79,5 +79,9 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
   
-  
+  # By default the authorization devise token headers will change after each request. The
+  # client is responsible for keeping track of the changing tokens. Change
+  # this to false to prevent the Authorization header from changing after
+  # each request.
+  config.change_headers_on_each_request = true
 end
