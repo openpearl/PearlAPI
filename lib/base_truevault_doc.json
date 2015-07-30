@@ -2,92 +2,84 @@
   "PearlUserGoalsEmotional": {
     "name": "Emotional",
     "description": "Emotional health refers to the awareness and understanding of your own emotions and the ability to express them in a positive, constructive way.",
-    "goals": [
-      {"feel_better": 
-        {
-          "name": "Feel Better",
-          "checked": false
-        } 
+    "goals": {
+      "feel_better": {
+        "id": "feel_better",
+        "name": "Feel better",
+        "checked": false
       }
-    ]
+    }
   },
   "PearlUserGoalsEnvironmental": {
     "name": "Environmental",
     "description": "Environmental health refers to your ability to live in harmony with the environment.",
-    "goals": []
+    "goals": {}
   },
   "PearlUserGoalsFinancial": {
     "name": "Financial",
     "description": "Financial health refers to your ability to effectively manage your financial resources.",
-    "goals": []
+    "goals": {}
   },
   "PearlUserGoalsIntellectual": {
     "name": "Intellectual",
     "description": "Intellectual health refers to your ability to make decisions by drawing from your general body of knowledge, creativity and common sense. ",
-    "goals": [
-      {"stay_sharp": 
-        {
-          "name": "Stay Sharp",
-          "checked": false
-        } 
+    "goals": {
+      "stay_sharp": {
+        "id": "stay_sharp",
+        "name": "Stay sharp",
+        "checked": false
       }
-    ]
+    }
   },
   "PearlUserGoalsOccupational": {
     "name": "Occupational",
-    "description": "Occupational health refers to your ability to find satisfation and personal fulfillment with your job or career.",
-    "goals": []
+    "description": "Occupational health refers to your ability to find satisfaction and personal fulfillment with your job or career.",
+    "goals": {}
   },
   "PearlUserGoalsPhysical": {
     "name": "Physical",
     "description": "Physical health refers to your ability to maintain a physical condition which allows you to enjoy a healthy quality of life without undue fatigue or stress",
-    "goals": [
-      {"be_more_active": 
-        {
-          "name": "Be more active",
-          "checked": false
-        } 
+    "goals": {
+      "be_more_active": {
+        "id": "be_more_active",
+        "name": "Be more active",
+        "checked": false
       },
-      {"eat_better": 
-        {
-          "name": "Eat better",
-          "checked": false
-        } 
+      "eat_better": {
+        "id": "eat_better",
+        "name": "Eat better",
+        "checked": false
       },
-      {"get_fit": 
-        {
-          "name": "Get fit",
-          "checked": false
-        } 
+      "get_fit": {
+        "id": "get_fit",
+        "name": "Get fit",
+        "checked": false
       },
-      {"lose_weight": 
-        {
-          "name": "Lose weight",
-          "checked": false
-        } 
+      "lose_weight": {
+        "id": "lose_weight",
+        "name": "Lose weight",
+        "checked": false
       },
-      {"sleep_better": 
-        {
-          "name": "Sleep better",
-          "checked": false
-        } 
+      "sleep_better": {
+        "id": "sleep_better",
+        "name": "Sleep better",
+        "checked": false
       },
-      {"smoke_less": 
-        {
-          "name": "Smoke less",
-          "checked": false
-        } 
+      "smoke_less": {
+        "id": "smoke_less",
+        "name": "Smoke less",
+        "checked": false
       }
-    ]
+    }
   },
   "PearlUserGoalsSocial": {
     "name": "Social",
     "description": "Social health refers to your ability to establish and maintain positive relationships with others.",
-    "goals": []
+    "goals": {}
   },
   "PearlUserGoalsSpiritual": {
     "name": "Spiritual",
     "description": "Spiritual health refers to your ability to realize your moral principles, beliefs and values through your actions.",
-    "goals": []
+    "goals": {}
   }
 }
