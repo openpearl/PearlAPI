@@ -81,19 +81,11 @@ class Api::V1::ConversationsController < ApplicationController
   end
 
   # Returns neatly formatted context data for graphing
-  def getGraphData
+  def showGraphData
     if not @document.nil?
       contextRequirements = @plugin.getContextRequirements.with_indifferent_access
       contextData = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements).with_indifferent_access
-      dataPointsArray = []
-      contextData.keys.each do |dataType|
-        contextData[dataType].each do |dataPoint|
-          hash = {}
-          hash["timestamp"] = dataPoint["endDate"]
-          hash["steps"] = dataPoint["quantity"]
-          dataPointsArray.push(hash)
-        end  
-      end
+      dataPointsArray = @document.getGraphData(contextData)
       render json: {
         status: 'success',
         data: dataPointsArray

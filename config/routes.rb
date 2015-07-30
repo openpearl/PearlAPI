@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       post 'converse'          => 'conversations#converse', as: :converse
       get 'context'            => 'conversations#getContextUpdateRequirements', as: :context
       post 'context'           => 'conversations#syncContext', as: :sync 
-      get 'context/graphs'     => 'conversations#getGraphData', as: :graph 
+      get 'context/graphs'     => 'conversations#showGraphData', as: :graph 
       post 'test' => 'conversations#test', as: :test
     end
   end
