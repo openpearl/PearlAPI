@@ -4,6 +4,11 @@ class Api::V1::ConversationsController < ApplicationController
   before_action :authenticate_user!
 
 
+  # For testing/debugging
+  def test
+
+  end
+
   # Returns a storyboard card at the cardID given if a plugin is loaded and initialized.
   def converse
     card = @plugin.getCard(context_params["cardID"], current_user.id)
@@ -23,7 +28,8 @@ class Api::V1::ConversationsController < ApplicationController
   def getContextUpdateRequirements
     contextRequirements = @plugin.getContextRequirements.with_indifferent_access
     contextUpdateRequirements = {}
-    defaultEndDate = Time.new(2000).to_s(:db)
+    defaultStartDate = Time.new(2000).to_i
+    defaultEndDate = Time.now.to_i
 
     # Strip out any custom Pearl context requirements, since the client does not have any knowledge of them.
     contextRequirements.keys.each do |context|
@@ -40,10 +46,11 @@ class Api::V1::ConversationsController < ApplicationController
     # first time), then populate it with a default endDate from the year 2000.
     contextUpdateRequirements.keys.each do |key|
       if data.key?(key) and not data[key].nil?
-        contextUpdateRequirements[key]["endDate"] = data[key]["endDate"]
+        contextUpdateRequirements[key]["startDate"] = data[key]["endDate"]
       else
-        contextUpdateRequirements[key]["endDate"] = defaultEndDate
+        contextUpdateRequirements[key]["startDate"] = defaultStartDate
       end
+      contextUpdateRequirements[key]["endDate"] = defaultEndDate
     end
 
     # Return the final hash which should include all the information that the client will need to retrieve the
@@ -73,7 +80,31 @@ class Api::V1::ConversationsController < ApplicationController
     end
   end
 
-
+  # Returns neatly formatted context data for graphing
+  def getGraphData
+    if not @document.nil?
+      contextRequirements = @plugin.getContextRequirements.with_indifferent_access
+      contextData = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements).with_indifferent_access
+      dataPointsArray = []
+      contextData.keys.each do |dataType|
+        contextData[dataType].each do |dataPoint|
+          hash = {}
+          hash["timestamp"] = dataPoint["endDate"]
+          hash["steps"] = dataPoint["quantity"]
+          dataPointsArray.push(hash)
+        end  
+      end
+      render json: {
+        status: 'success',
+        data: dataPointsArray
+      }
+    else
+      render json: {
+        status: 'error',
+        message: 'Document does not exist!'
+      }
+    end
+  end
 
 
   private
