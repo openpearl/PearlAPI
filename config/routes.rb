@@ -8,8 +8,8 @@ Rails.application.routes.draw do
         registrations:  'api/v1/devise_controller_mod/registrations'
       }
       mount PearlEngine::Engine, at: "/pearl"
-      get 'goals'              => 'settings#showGoals', as: :goals
-      patch 'goals'            => 'settings#updateGoals', as: :goals_update
+      get 'goals'              => 'goals#show', as: :goals
+      patch 'goals'            => 'goals#update', as: :goals_update
       get 'documents'          => 'documents#read', as: :document_read
       patch 'documents'        => 'documents#update', as: :document_update
       patch 'documents/reset'  => 'documents#reset', as: :document_reset
@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       get 'context'            => 'conversations#getContextUpdateRequirements', as: :context
       post 'context'           => 'conversations#syncContext', as: :sync 
       get 'context/graphs'     => 'conversations#showGraphData', as: :graph 
-      post 'test' => 'conversations#test', as: :test
+      post 'test'              => 'conversations#test', as: :test
     end
   end
   
