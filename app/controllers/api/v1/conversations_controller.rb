@@ -6,7 +6,7 @@ class Api::V1::ConversationsController < ApplicationController
 
   # For testing/debugging
   def test
-
+    
   end
 
   # Returns a storyboard card at the cardID given if a plugin is loaded and initialized.
@@ -26,7 +26,7 @@ class Api::V1::ConversationsController < ApplicationController
   # Get the context requirements for the plugin, and form a response json for the client to request that
   # information. For iOS, it returns a json response for requesting data from HealthKit.
   def getContextUpdateRequirements
-    contextRequirements = @plugin.getContextRequirements.with_indifferent_access
+    contextRequirements = @plugin.getContextRequirements
     contextUpdateRequirements = {}
     defaultStartDate = Time.new(2000).to_i
     defaultEndDate = Time.now.to_i
@@ -56,7 +56,6 @@ class Api::V1::ConversationsController < ApplicationController
     # Return the final hash which should include all the information that the client will need to retrieve the
     # context data for the plugin.
     render json: contextUpdateRequirements
-
   end
 
 
@@ -64,9 +63,10 @@ class Api::V1::ConversationsController < ApplicationController
   # Updates Truevault, then initializes the plugin with the context data.
   def syncContext
     if not @document.nil?
-      @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, context_params)
-      contextRequirements = @plugin.getContextRequirements.with_indifferent_access
-      contextData = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
+      documentUpdates = @document.get_document_updates(@@tvVaultID, @@tvAdminAPI, context_params)
+      @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, documentUpdates)
+      contextRequirements = @plugin.getContextRequirements
+      contextData = @document.query_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
       @plugin.initializeContext(contextData, current_user.id)
       render json: {
         status: 'success',
@@ -83,8 +83,8 @@ class Api::V1::ConversationsController < ApplicationController
   # Returns neatly formatted context data for graphing
   def showGraphData
     if not @document.nil?
-      contextRequirements = @plugin.getContextRequirements.with_indifferent_access
-      contextData = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements).with_indifferent_access
+      contextRequirements = @plugin.getContextRequirements
+      contextData = @document.query_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
       dataPointsArray = @document.getGraphData(contextData)
       render json: {
         status: 'success',

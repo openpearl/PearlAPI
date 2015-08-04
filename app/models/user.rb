@@ -4,7 +4,6 @@ class User < ActiveRecord::Base
           :confirmable, :omniauthable
   include DeviseTokenAuth::Concerns::User
   has_one :document, dependent: :destroy
-  has_one :access_token, dependent: :destroy
   has_many :blobs, dependent: :destroy
   
   #Setting up user attributes validation
@@ -23,16 +22,16 @@ class User < ActiveRecord::Base
     tvResponse = `curl https://api.truevault.com/v1/users   \
                   -X POST  -u #{api_key}:    \
                   -d "username=#{email}&password=#{password}"`
-    tvResponseJSON = JSON.parse(tvResponse)
+    tvResponseJSON = JSON.parse(tvResponse).with_indifferent_access
   end
 
 
   #Initializes a document for a new user. This document holds all their personal information
   #as base64 encoded JSON strings.
-  #TODO: Update this document encoding if schema changes
   def initialize_tv_user_document(vault_id, api_key)
-    tvDocument = Document.new(:user_id => self.id)    
-    tvResponseJSON = tvDocument.create_tv_document(vault_id, api_key)
+    tvDocument = Document.new(:user_id => self.id)
+    tvDocumentSchema = tvDocument.get_document_schema    
+    tvResponseJSON = tvDocument.create_tv_document(vault_id, api_key, tvDocumentSchema)
     tvDocumentID = tvResponseJSON["document_id"]
     tvDocument.documentID = tvDocumentID
     tvDocument.save  
