@@ -1,14 +1,11 @@
-
-# Place controller actions for handling user settings in this file
-class Api::V1::SettingsController < ApplicationController
+class Api::V1::GoalsController < ApplicationController
   before_action :get_document
   before_action :get_goals
   before_action :authenticate_user!
 
 
-
-  # # Controller actions for showing and updating user goals (such as being more active, losing weight, etc)
-  def showGoals
+  # Controller actions for showing and updating user goals (such as being more active, losing weight, etc)
+  def show
     if not @document.nil?
       tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
       goalsData = @goal.get_goals(tvDocument)
@@ -26,7 +23,7 @@ class Api::V1::SettingsController < ApplicationController
     end
   end
 
-  def updateGoals
+  def update
     if not @document.nil?
         @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
         render json: {

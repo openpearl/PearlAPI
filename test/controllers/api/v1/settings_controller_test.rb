@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::V1::SettingsControllerTest < ActionController::TestCase
+class Api::V1::GoalsControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end
