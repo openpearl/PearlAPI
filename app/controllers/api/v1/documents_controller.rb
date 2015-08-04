@@ -2,6 +2,7 @@ class Api::V1::DocumentsController < ApplicationController
   before_action :get_document
   before_action :authenticate_user!
   
+
   def read
     if not @document.nil?
       tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
@@ -23,7 +24,7 @@ class Api::V1::DocumentsController < ApplicationController
   # Returns a json hash of all the key-value pairs found in the TrueVault document
   def query
     if not @document.nil?
-      tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI, document_params)
+      tvDocument = @document.query_tv_document(@@tvVaultID, @@tvAdminAPI, document_params)
       render json: {
                       status: 'success',
                       message:  'Document was successfully queried.',
@@ -46,7 +47,8 @@ class Api::V1::DocumentsController < ApplicationController
                     }
     else
       if not @document.nil?
-        @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
+        documentUpdates = @document.get_document_updates(@@tvVaultID, @@tvAdminAPI, document_params)
+        tvResponse = @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, documentUpdates)
         render json: {
                         status: 'success',
                         message:  'Document was successfully updated.'
