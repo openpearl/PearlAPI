@@ -26,6 +26,7 @@ gem 'bcrypt'
 
 # Our plugins.
 gem 'pearl_engine', :git => 'git://github.com/openpearl/PearlEngine.git', :branch => 'master' 
+
 # Local version for testing
 # gem 'pearl_engine', path: "/Users/admin/Desktop/PearlEngine"
 
