@@ -8,7 +8,19 @@ Rails.application.configure do
   config.cache_store = :memory_store
 
   # Do not eager load code on boot.
-  config.eager_load = true
+  config.eager_load = false
+
+
+  # Note: Fix to allow sublasses to get reloaded in development in order to properly return lsit of 
+  # descendents of Pearl Plugin
+  spec = Bundler.load.specs.find{|s| s.name == 'pearl_engine' }
+  pearlEngineRootPath = spec.full_gem_path
+  plugins = File.join(pearlEngineRootPath, 'app', 'models', 'pearl_engine', 'plugins',"*.rb")
+  config.eager_load_paths += Dir[plugins]
+  ActionDispatch::Reloader.to_prepare do
+    Dir[plugins].each {|file| require_dependency file}
+  end
+
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -18,7 +30,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { :host => "localhost", :port => 3000 }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = { :address => "localhost", :port => 1025 }
-  
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
@@ -44,7 +56,7 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-  
+
   # Stop development from auto reloading classes
   # config.reload_classes_only_on_change = false
 
