@@ -27,6 +27,7 @@ The Pearl API. Handles server side logic and communication with the Pearl Client
 4. Create the database tables:
 
     ```console
+    rake db:create
     rake db:migrate
     ```
 
