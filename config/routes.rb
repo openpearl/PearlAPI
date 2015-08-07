@@ -14,11 +14,13 @@ Rails.application.routes.draw do
       patch 'documents'        => 'documents#update', as: :document_update
       patch 'documents/reset'  => 'documents#reset', as: :document_reset
       post 'documents'         => 'documents#query', as: :document_query
+      get 'guest_token'     => 'conversations#get_guest_token', as: :guest_token
       post 'converse'          => 'conversations#converse', as: :converse
       get 'context'            => 'conversations#getContextUpdateRequirements', as: :context
       post 'context'           => 'conversations#syncContext', as: :sync 
       get 'context/graphs'     => 'conversations#showGraphData', as: :graph 
-      post 'test'              => 'conversations#test', as: :test
+      get 'foo'              => 'conversations#foo', as: :foo
+      post 'bar'  => 'conversations#bar', as: :bar
     end
   end
   

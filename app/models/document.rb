@@ -154,15 +154,154 @@ class Document < ActiveRecord::Base
 
 
   def getGraphData(contextData)
-    dataPointsArray = []
+    datapointsHash = {}
     contextData.keys.each do |dataType|
-      contextData[dataType].each do |dataPoint|
-        hash = {}
-        hash["timestamp"] = dataPoint["endDate"]
-        hash["steps"] = dataPoint["quantity"]
-        dataPointsArray.push(hash)
+      datapointsHash[dataType] = []
+      sortedList = self.sortDatapointToBuckets(contextData[dataType])
+      sortedList.each do |value|
+        tempHash = {}
+        tempHash[:timestamp] = value[:endTime]
+        begin
+          tempHash[:quantity] = value[:datapoints].sum / (value[:datapoints].length)
+        # Catch dvivde by zero errors
+        rescue
+          tempHash[:quantity] = 0
+        end
+        datapointsHash[dataType].push(tempHash)
       end
     end
-    return dataPointsArray
+    return datapointsHash
   end
+
+
+  def sortDatapointToBuckets(dataPoints)
+    bucketList = [
+      oneDayAgoBucket = {
+        startTime: 1.day.ago.beginning_of_day.to_i,
+        endTime: 1.day.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      twoDaysAgoBucket = {
+        startTime: 2.days.ago.beginning_of_day.to_i,
+        endTime: 2.days.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      threeDaysAgoBucket = {
+        startTime: 3.days.ago.beginning_of_day.to_i,
+        endTime: 3.days.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      fourDaysAgoBucket = {
+        startTime: 4.days.ago.beginning_of_day.to_i,
+        endTime: 4.days.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      fiveDaysAgoBucket = {
+        startTime: 5.days.ago.beginning_of_day.to_i,
+        endTime: 5.days.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      sixDaysAgoBucket = {
+        startTime: 6.days.ago.beginning_of_day.to_i,
+        endTime: 6.days.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      sevenDaysAgoBucket = {
+        startTime: 7.days.ago.beginning_of_day.to_i,
+        endTime: 7.days.ago.end_of_day.to_i,
+        datapoints: []
+      },
+      twoWeeksAgoBucket = {
+        startTime: 2.weeks.ago.beginning_of_day.to_i,
+        endTime: 1.weeks.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      threeWeeksAgoBucket = {
+        startTime: 3.weeks.ago.beginning_of_day.to_i,
+        endTime: 2.weeks.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      fourWeeksAgoBucket = {
+        startTime: 4.weeks.ago.beginning_of_day.to_i,
+        endTime: 3.weeks.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      twoMonthsAgoBucket = {
+        startTime: 2.months.ago.beginning_of_day.to_i,
+        endTime: 4.weeks.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      threeMonthsAgoBucket = {
+        startTime: 3.months.ago.beginning_of_day.to_i,
+        endTime: 2.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      fourMonthsAgoBucket = {
+        startTime: 4.months.ago.beginning_of_day.to_i,
+        endTime: 3.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      fiveMonthsAgoBucket = {
+        startTime: 5.months.ago.beginning_of_day.to_i,
+        endTime: 4.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      sixMonthsAgoBucket = {
+        startTime: 6.months.ago.beginning_of_day.to_i,
+        endTime: 5.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      sevenMonthsAgoBucket = {
+        startTime: 7.months.ago.beginning_of_day.to_i,
+        endTime: 6.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      eightMonthsAgoBucket = {
+        startTime: 8.months.ago.beginning_of_day.to_i,
+        endTime: 7.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      nineMonthsAgoBucket = {
+        startTime: 9.months.ago.beginning_of_day.to_i,
+        endTime: 8.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      tenMonthsAgoBucket = {
+        startTime: 10.months.ago.beginning_of_day.to_i,
+        endTime: 9.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      elevenMonthsAgoBucket = {
+        startTime: 11.months.ago.beginning_of_day.to_i,
+        endTime: 10.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      },
+      twelveMonthsAgoBucket = {
+        startTime: 12.months.ago.beginning_of_day.to_i,
+        endTime: 11.months.ago.beginning_of_day.to_i - 1,
+        datapoints: []
+      }
+    ]
+
+    startOfToday= Time.now.getutc.beginning_of_day.to_i
+    endOfToday= Time.now.getutc.end_of_day.to_i
+
+    dataPoints.each do |point|
+      point = point.with_indifferent_access
+      bucketList.each do |bucket|
+        if point["startDate"] >= bucket[:startTime] and point["endDate"] <= bucket[:endTime]
+          bucket[:datapoints].push(point["quantity"])
+        end
+      end
+      if point["startDate"] >= startOfToday and point["endDate"] <= endOfToday
+        tempHash = {}
+        tempHash[:startTime] = point["startDate"]
+        tempHash[:endTime] = point["endDate"]
+        tempHash[:datapoints] = [point["quantity"]]
+        bucketList.unshift(tempHash)
+      end
+    end
+    return bucketList
+  end
+
 end
