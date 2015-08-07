@@ -1,25 +1,63 @@
 class Api::V1::ConversationsController < ApplicationController
+  before_action :authenticate_user!, :except => [:bar, :foo, :converse, :get_guest_token]
+  before_action :get_userID
   before_action :pick_plugin
   before_action :get_document
-  before_action :authenticate_user!
+
 
 
   # For testing/debugging
-  def test
-    
+  def foo
+
   end
+
+  def bar
+
+  end
+
+
+  # Checks the sign in status of the user. If not authenticated, gives the client a random guest token
+  # to use.
+  def get_guest_token
+    if current_user
+      render json: {
+        signed_in: true
+      }
+    else
+      Rails.cache.write(@userID, @userID, expires_in: 30.minutes)
+      render json: {
+        signed_in: false,
+        guest_token: @userID
+      }
+    end
+  end
+
 
   # Returns a storyboard card at the cardID given if a plugin is loaded and initialized.
   def converse
-    card = @plugin.getCard(context_params["cardID"], current_user.id)
-    if card.nil?
-      render json: {
-        status: "error",
-        message: 'End of conversation/no plugin loaded!'
-      }
-    else
-      render json: card
+    guest_token = cleaned_params["guest_token"]
+
+    if not guest_token.nil?
+      expected_token = Rails.cache.read(guest_token)
+      if guest_token == expected_token
+        @userID = guest_token
+      else
+        render :nothing => true, :status => 401
+        return
+      end
+    elsif guest_token.nil? and not current_user
+      render :nothing => true, :status => 401
+      return
     end
+
+    if not cleaned_params["cardBody"].nil?
+      @plugin.cacheToPluginData(cleaned_params["cardBody"], @userID)
+      @plugin.handleUserInput(cleaned_params["cardBody"], @userID)
+    end
+
+    card = @plugin.getCard(cleaned_params["cardID"], @userID)
+
+    render json: card
   end
 
 
@@ -63,11 +101,11 @@ class Api::V1::ConversationsController < ApplicationController
   # Updates Truevault, then initializes the plugin with the context data.
   def syncContext
     if not @document.nil?
-      documentUpdates = @document.get_document_updates(@@tvVaultID, @@tvAdminAPI, context_params)
+      documentUpdates = @document.get_document_updates(@@tvVaultID, @@tvAdminAPI, cleaned_params)
       @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, documentUpdates)
       contextRequirements = @plugin.getContextRequirements
       contextData = @document.query_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
-      @plugin.initializeContext(contextData, current_user.id)
+      @plugin.initializeContext(contextData, @userID)
       render json: {
         status: 'success',
         message: 'Successfully synced data. Conversation is ready to begin.'
@@ -99,11 +137,25 @@ class Api::V1::ConversationsController < ApplicationController
   end
 
 
+
   private
 
-  def pick_plugin
-    @plugin ||= PearlEngine::PearlPlugin.choosePlugIn(current_user.id)
+
+  def get_userID
+    begin
+      @userID = current_user.id
+      # Since current user is not found, the user must not yet be authenticated, so generate a random guest
+      # token for them to use.
+    rescue
+      @userID = SecureRandom.urlsafe_base64
+    end
   end
+
+
+  def pick_plugin
+    @plugin ||= PearlEngine::PearlPlugin.choosePlugIn(@userID)
+  end
+
 
   def get_document
     begin
@@ -113,7 +165,8 @@ class Api::V1::ConversationsController < ApplicationController
     end
   end
 
-  def context_params
+
+  def cleaned_params
     params.except(:format, :controller, :action)
   end
 end
