@@ -26,7 +26,7 @@ class Api::V1::DeviseControllerMod::RegistrationsController < DeviseTokenAuth::R
       resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
       if @resource.valid?
         tvResponseJSON = @resource.create_tv_user(sign_up_params, @@tvAdminAPI)
-        if !tvResponseJSON["error"]
+        if tvResponseJSON["result"] == "success"
           @resource.save
           @resource.initialize_tv_user_document( @@tvVaultID, @@tvAdminAPI )
           unless @resource.confirmed?
