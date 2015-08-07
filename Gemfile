@@ -16,7 +16,10 @@ gem 'spring', :group => :development
 
 gem 'omniauth'
 gem 'devise'
-gem 'devise_token_auth' # Token based authentication for Rails JSON APIs
+
+# Token based authentication for Rails JSON APIs
+# Using 0.1.32.beta9 for now until we find a way to fix "no method" bug with using guest account.
+gem 'devise_token_auth' , '= 0.1.32.beta9'
 
 gem 'pg'
 
