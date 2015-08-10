@@ -1,6 +1,5 @@
 class Api::V1::GoalsController < ApplicationController
   before_action :get_document
-  before_action :get_goals
   before_action :authenticate_user!
 
 
@@ -8,12 +7,12 @@ class Api::V1::GoalsController < ApplicationController
   def show
     if not @document.nil?
       tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
-      goalsData = @goal.get_goals(tvDocument)
+      tvGoals = Goal.get_goals(tvDocument)
 
       render json: {
         status: 'success',
         message:  'Document was successfully retrieved.',
-        data:   goalsData
+        data:   tvGoals
       }
     else
       render json: {
@@ -23,19 +22,23 @@ class Api::V1::GoalsController < ApplicationController
     end
   end
 
+
   def update
     if not @document.nil?
-        @document.update_tv_document(@@tvVaultID, @@tvAdminAPI,document_params)
-        render json: {
-                        status: 'success',
-                        message:  'Document was successfully updated.'
-                      }
-      else
-        render json: {
-                        status: 'error',
-                        message: 'Document does not exist!'
-                      }
-      end
+      tvDocument = @document.read_tv_document(@@tvVaultID, @@tvAdminAPI)
+      tvGoals = Goal.get_goals(tvDocument)
+      updatedGoals = Goal.get_goal_updates(tvGoals, cleaned_params)
+      @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, updatedGoals)
+      render json: {
+        status: 'success',
+        message:  'Document was successfully updated.'
+      }
+    else
+      render json: {
+        status: 'error',
+        message: 'Document does not exist!'
+      }
+    end
   end
 
 
@@ -49,12 +52,7 @@ class Api::V1::GoalsController < ApplicationController
     end
   end
 
-
-  def get_goals
-      @goal ||= Goal.new
-  end
-
-  def settings_params
+  def cleaned_params
     params.except(:format, :controller, :action)
   end
 end
