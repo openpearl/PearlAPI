@@ -22,13 +22,15 @@ class Api::V1::ConversationsController < ApplicationController
     if current_user
       render json: {
         signed_in: true
-      }
+      },
+      status: 200
     else
       Rails.cache.write(@userID, @userID, expires_in: 30.minutes)
       render json: {
         signed_in: false,
         guest_token: @userID
-      }
+      },
+      status: 200
     end
   end
 
@@ -57,7 +59,7 @@ class Api::V1::ConversationsController < ApplicationController
 
     card = @plugin.getCard(cleaned_params["cardID"], @userID)
 
-    render json: card
+    render json: card, status: 200
   end
 
 
@@ -93,7 +95,7 @@ class Api::V1::ConversationsController < ApplicationController
 
     # Return the final hash which should include all the information that the client will need to retrieve the
     # context data for the plugin.
-    render json: contextUpdateRequirements
+    render json: contextUpdateRequirements, status: 200
   end
 
 
@@ -107,14 +109,12 @@ class Api::V1::ConversationsController < ApplicationController
       contextData = @document.query_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
       @plugin.initializeContext(contextData, @userID)
       render json: {
-        status: 'success',
         message: 'Successfully synced data. Conversation is ready to begin.'
-      }
+      }, status: 200
     else
       render json: {
-        status: 'error',
         message: 'Document does not exist!'
-      }
+      }, status: 500
     end
   end
 
@@ -125,14 +125,12 @@ class Api::V1::ConversationsController < ApplicationController
       contextData = @document.query_tv_document(@@tvVaultID, @@tvAdminAPI, contextRequirements)
       dataPointsArray = @document.getGraphData(contextData)
       render json: {
-        status: 'success',
         data: dataPointsArray
-      }
+      }, status: 200
     else
       render json: {
-        status: 'error',
         message: 'Document does not exist!'
-      }
+      }, status: 500
     end
   end
 
