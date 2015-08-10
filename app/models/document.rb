@@ -41,7 +41,7 @@ class Document < ActiveRecord::Base
   end
 
 
-  # Replaces the data in the TrueVault document belonging to the current user with the new data given
+  # Replaces the data in the TrueVault document belonging to the current user with the new data given(a JSON hash)
   def update_tv_document(vault_id, api_key, new_data)
     # Encode new_data as a base 64 encoded JSON string.
     tvDocEncode = Base64.encode64(new_data.to_json)
