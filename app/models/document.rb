@@ -1,5 +1,6 @@
 class Document < ActiveRecord::Base
   belongs_to :user
+  SECONDS_IN_DAY = 24*60*60
 
   # Returns a json hash representing a default TrueVault document schema for a Pearl user.
   def get_document_schema
@@ -153,6 +154,8 @@ class Document < ActiveRecord::Base
   end
 
 
+  # Takes a list of datapoints sorted into date buckets, and returns it as a hash of daily average 
+  # datapoints for graphing. Days with no data are not taken into account.
   def getGraphData(contextData)
     datapointsHash = {}
     contextData.keys.each do |dataType|
@@ -162,124 +165,149 @@ class Document < ActiveRecord::Base
         tempHash = {}
         tempHash[:timestamp] = value[:endTime]
         begin
-          tempHash[:quantity] = value[:datapoints].sum / (value[:datapoints].length)
+          tempHash[:quantity] = value[:datapoints].sum / (value[:uniqueDays].length)
         # Catch dvivde by zero errors
         rescue
-          tempHash[:quantity] = 0
+          tempHash[:quantity] = value[:datapoints].sum 
         end
         datapointsHash[dataType].push(tempHash)
       end
+      # Make sure the datapoints are sorted in reverse chronological order(most recent first)
+      datapointsHash[dataType] = datapointsHash[dataType].sort_by{ |datapoint| datapoint[:timestamp] }.reverse
     end
     return datapointsHash
   end
 
 
+  # Sorts datapoints with start date, end date and quantity information into buckets which non-linearizes time.
+  # Greater granularity is givne to datapoints that are more recent, with points going up to one year back.
   def sortDatapointToBuckets(dataPoints)
     bucketList = [
       oneDayAgoBucket = {
         startTime: 1.day.ago.beginning_of_day.to_i,
         endTime: 1.day.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       twoDaysAgoBucket = {
         startTime: 2.days.ago.beginning_of_day.to_i,
         endTime: 2.days.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       threeDaysAgoBucket = {
         startTime: 3.days.ago.beginning_of_day.to_i,
         endTime: 3.days.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       fourDaysAgoBucket = {
         startTime: 4.days.ago.beginning_of_day.to_i,
         endTime: 4.days.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       fiveDaysAgoBucket = {
         startTime: 5.days.ago.beginning_of_day.to_i,
         endTime: 5.days.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       sixDaysAgoBucket = {
         startTime: 6.days.ago.beginning_of_day.to_i,
         endTime: 6.days.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       sevenDaysAgoBucket = {
         startTime: 7.days.ago.beginning_of_day.to_i,
         endTime: 7.days.ago.end_of_day.to_i,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       twoWeeksAgoBucket = {
         startTime: 2.weeks.ago.beginning_of_day.to_i,
         endTime: 1.weeks.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       threeWeeksAgoBucket = {
         startTime: 3.weeks.ago.beginning_of_day.to_i,
         endTime: 2.weeks.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       fourWeeksAgoBucket = {
         startTime: 4.weeks.ago.beginning_of_day.to_i,
         endTime: 3.weeks.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       twoMonthsAgoBucket = {
         startTime: 2.months.ago.beginning_of_day.to_i,
         endTime: 4.weeks.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       threeMonthsAgoBucket = {
         startTime: 3.months.ago.beginning_of_day.to_i,
         endTime: 2.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       fourMonthsAgoBucket = {
         startTime: 4.months.ago.beginning_of_day.to_i,
         endTime: 3.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       fiveMonthsAgoBucket = {
         startTime: 5.months.ago.beginning_of_day.to_i,
         endTime: 4.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       sixMonthsAgoBucket = {
         startTime: 6.months.ago.beginning_of_day.to_i,
         endTime: 5.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       sevenMonthsAgoBucket = {
         startTime: 7.months.ago.beginning_of_day.to_i,
         endTime: 6.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       eightMonthsAgoBucket = {
         startTime: 8.months.ago.beginning_of_day.to_i,
         endTime: 7.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       nineMonthsAgoBucket = {
         startTime: 9.months.ago.beginning_of_day.to_i,
         endTime: 8.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       tenMonthsAgoBucket = {
         startTime: 10.months.ago.beginning_of_day.to_i,
         endTime: 9.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       elevenMonthsAgoBucket = {
         startTime: 11.months.ago.beginning_of_day.to_i,
         endTime: 10.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       },
       twelveMonthsAgoBucket = {
         startTime: 12.months.ago.beginning_of_day.to_i,
         endTime: 11.months.ago.beginning_of_day.to_i - 1,
-        datapoints: []
+        datapoints: [],
+        uniqueDays: []
       }
     ]
 
@@ -291,8 +319,16 @@ class Document < ActiveRecord::Base
       bucketList.each do |bucket|
         if point["startDate"] >= bucket[:startTime] and point["endDate"] <= bucket[:endTime]
           bucket[:datapoints].push(point["quantity"])
+
+          # Allows us to keep track of the number of unique dates that the data is sampled from, so that we 
+          # can get an accurate daily average.
+          date = (point["endDate"]/SECONDS_IN_DAY).floor
+          bucket[:uniqueDays].push(date) unless bucket[:uniqueDays].include?(date)
         end
       end
+
+      # All datapoints for today are plotted individually instead of getting compounded, so we put them in 
+      # their own "buckets"
       if point["startDate"] >= startOfToday and point["endDate"] <= endOfToday
         tempHash = {}
         tempHash[:startTime] = point["startDate"]
