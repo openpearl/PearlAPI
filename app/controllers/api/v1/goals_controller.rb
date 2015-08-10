@@ -10,15 +10,15 @@ class Api::V1::GoalsController < ApplicationController
       tvGoals = Goal.get_goals(tvDocument)
 
       render json: {
-        status: 'success',
         message:  'Document was successfully retrieved.',
         data:   tvGoals
-      }
+      },
+        status: 200
     else
       render json: {
-        status: 'error',
         message: 'Document does not exist!'
-      }
+      },
+        status: 500
     end
   end
 
@@ -30,14 +30,14 @@ class Api::V1::GoalsController < ApplicationController
       updatedGoals = Goal.get_goal_updates(tvGoals, cleaned_params)
       @document.update_tv_document(@@tvVaultID, @@tvAdminAPI, updatedGoals)
       render json: {
-        status: 'success',
         message:  'Document was successfully updated.'
-      }
+      },
+        status: 200
     else
       render json: {
-        status: 'error',
         message: 'Document does not exist!'
-      }
+      },
+        status: 500
     end
   end
 

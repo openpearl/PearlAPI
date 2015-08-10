@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   @@tvVaultID = ENV["TV_VAULT_ID"]
   @@tvSchemaID = ENV["TV_SCHEMA_ID"]
   
-  def test
-    render json: "placeholder root"
+  def home
+    render json: "placeholder root", status: 200
   end
 end
