@@ -24,5 +24,5 @@ Rails.application.routes.draw do
     end
   end
   
-  root 'application#test'
+  root 'application#home'
 end
