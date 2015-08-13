@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
                   -X POST  -u #{api_key}:    \
                   -d "username=#{email}&password=#{password}"`
     tvResponseJSON = JSON.parse(tvResponse).with_indifferent_access
+    return tvResponseJSON
   end
 
 
