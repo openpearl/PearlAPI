@@ -6,16 +6,6 @@ class Api::V1::ConversationsController < ApplicationController
 
 
 
-  # For testing/debugging
-  def foo
-
-  end
-
-  def bar
-
-  end
-
-
   # Checks the sign in status of the user. If not authenticated, gives the client a random guest token
   # to use.
   def get_guest_token
