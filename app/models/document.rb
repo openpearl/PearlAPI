@@ -219,7 +219,7 @@ class Document < ActiveRecord::Base
         datapoints: [],
         uniqueDays: []
       },
-      sevenDaysAgoBucket = {
+      oneWeekAgoBucket = {
         startTime: 7.days.ago.beginning_of_day.to_i,
         endTime: 7.days.ago.end_of_day.to_i,
         datapoints: [],
@@ -237,7 +237,7 @@ class Document < ActiveRecord::Base
         datapoints: [],
         uniqueDays: []
       },
-      fourWeeksAgoBucket = {
+      oneMonthAgoBucket = {
         startTime: 4.weeks.ago.beginning_of_day.to_i,
         endTime: 3.weeks.ago.beginning_of_day.to_i - 1,
         datapoints: [],

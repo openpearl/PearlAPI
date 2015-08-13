@@ -1,9 +1,9 @@
 GIT
   remote: git://github.com/openpearl/PearlEngine.git
-  revision: 5164391aafaabc7e6db57f346c3c339a228914ed
+  revision: 6dc48e80c361ed56349f5d2b8965a5dc2f987fd1
   branch: master
   specs:
-    pearl_engine (1.4.1)
+    pearl_engine (1.4.2)
       rails (~> 4.2.1)
 
 GEM
@@ -58,8 +58,14 @@ GEM
     devise_token_auth (0.1.32.beta9)
       devise (~> 3.3)
       rails (~> 4.2)
+    diff-lcs (1.2.5)
     erubis (2.7.0)
     eventmachine (1.0.8)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     figaro (1.1.1)
       thor (~> 0.14)
     globalid (0.3.6)
@@ -120,8 +126,25 @@ GEM
     rake (10.4.2)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
+    rspec-core (3.3.2)
+      rspec-support (~> 3.3.0)
+    rspec-expectations (3.3.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.3.0)
+    rspec-mocks (3.3.2)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.3.0)
+    rspec-rails (3.3.3)
+      actionpack (>= 3.0, < 4.3)
+      activesupport (>= 3.0, < 4.3)
+      railties (>= 3.0, < 4.3)
+      rspec-core (~> 3.3.0)
+      rspec-expectations (~> 3.3.0)
+      rspec-mocks (~> 3.3.0)
+      rspec-support (~> 3.3.0)
+    rspec-support (3.3.0)
     spring (1.3.6)
-    sprockets (3.2.0)
+    sprockets (3.3.0)
       rack (~> 1.0)
     sprockets-rails (2.3.2)
       actionpack (>= 3.0)
@@ -145,6 +168,7 @@ DEPENDENCIES
   bcrypt
   devise
   devise_token_auth (= 0.1.32.beta9)
+  factory_girl_rails
   figaro
   omniauth
   pearl_engine!
@@ -153,6 +177,7 @@ DEPENDENCIES
   rails
   rails-api
   rails_12factor
+  rspec-rails
   spring
   thin
 
